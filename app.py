@@ -14,7 +14,7 @@ st.markdown("---")
 
 # --- SIDEBAR UNTUK NAVIGASI ---
 st.sidebar.title("Navigasi")
-menu = st.sidebar.radio("Pilih Halaman:", ["Latar Belakang & Analisis", "Konsep SCH-Hub", "Prediksi & Proyeksi Ekonomi"])
+menu = st.sidebar.radio("Pilih Halaman:", ["Latar Belakang & Analisis", "Konsep SCH-Hub", "Prediksi & Proyeksi Ekonomi", "Buku Saku (FAQ)"])
 
 # --- HALAMAN 1: LATAR BELAKANG ---
 if menu == "Latar Belakang & Analisis":
@@ -239,6 +239,55 @@ elif menu == "Prediksi & Proyeksi Ekonomi":
 
             except Exception as e:
                 st.error(f"Terjadi kesalahan saat memproses CSV. Detail: {e}")
+    # --- HALAMAN 4: BUKU SAKU (FAQ) ---
+elif menu == "Buku Saku (FAQ)":
+    st.header("📖 Buku Saku Interaktif SCH-Hub")
+    st.write("Panduan tanya-jawab sederhana untuk memahami transformasi ekonomi komoditas kelapa di Sulawesi Barat. Klik pada pertanyaan untuk melihat jawaban.")
+    st.markdown("---")
+
+    with st.expander("🤔 1. Apa itu SCH-Hub secara sederhana?"):
+        st.write("""
+        **SCH-Hub (Strategic Coconut Hilirization Hub)** adalah sebuah ekosistem terpadu. Bayangkan ini sebagai sebuah kawasan pabrik pintar yang dilengkapi dengan aplikasi *smartphone*. 
+        Tujuannya satu: Menghentikan kebiasaan lama menjual kelapa butiran mentah yang murah, dan menggantinya dengan mengolah kelapa tersebut menjadi berbagai produk mahal di dalam daerah sendiri.
+        """)
+
+    with st.expander("🌴 2. Kenapa harus Kelapa? Bukankah sudah ada Kelapa Sawit?"):
+        st.write("""
+        Perekonomian Sulawesi Barat saat ini sangat bergantung pada sawit (mencapai 91,49% dari industri pengolahan). Ini sangat berbahaya! Jika harga sawit dunia jatuh, ekonomi daerah ikut hancur. 
+        
+        Kelapa biasa (*Cocos nucifera*) dipilih karena Sulawesi Barat punya lahan kelapa terbesar ke-4 di regional Sulawesi. Ini adalah "harta karun" yang selama ini terabaikan. Kita butuh komoditas andalan kedua agar ekonomi lebih kuat dan stabil.
+        """)
+
+    with st.expander("♻️ 3. Apa maksud 'Ekonomi Sirkular' atau 'Zero Waste' di pabrik ini?"):
+        st.write("""
+        Biasanya, petani hanya mengambil daging kelapa (untuk kopra) dan membuang sisanya. Dalam ekonomi sirkular SCH-Hub, **TIDAK ADA SAMPAH YANG DIBUANG**.
+        
+        - **Daging Kelapa** diolah menjadi *Virgin Coconut Oil* (VCO) atau kelapa parut kering ekspor.
+        - **Air Kelapa** diolah menjadi *Nata de Coco*.
+        - **Tempurung (Batok)** dibakar menjadi Arang Aktif yang mahal untuk industri filter air/udara.
+        - **Sabut Kelapa** diurai menjadi tali tambang atau media tanam (*cocopeat*).
+        """)
+
+    with st.expander("📱 4. Apa fungsi aplikasi SCH-APP bagi petani biasa?"):
+        st.write("""
+        SCH-APP memutus rantai "tengkulak" yang sering merugikan petani. Melalui aplikasi ini:
+        
+        1. Petani bisa melihat harga beli standar secara transparan.
+        2. Petani bisa langsung menjual hasil panennya ke pabrik SCH-Hub terdekat tanpa perantara.
+        3. Pabrik bisa memperkirakan kapan pasokan kelapa akan datang.
+        4. Petani mendapat panduan cara merawat pohon (*smart farming*) agar buahnya lebih lebat.
+        """)
+
+    with st.expander("💰 5. Dari mana datangnya keuntungan hingga 1500% itu?"):
+        st.write("""
+        Itu disebut **Nilai Tambah (Hilirisasi)**. 
+        
+        Jika seorang petani menjual kelapa utuh ke luar provinsi, ia mungkin hanya dapat Rp 2.000 per butir. Namun, jika batok kelapa itu diolah menjadi "Arang Aktif" kelas ekspor, harga batok dari satu kelapa saja bisa bernilai belasan ribu rupiah.
+        
+        Dengan pabrik yang ada di dalam Sulawesi Barat, seluruh proses ini menciptakan lapangan kerja baru bagi warga lokal dan pajaknya masuk ke pemerintah daerah (mencegah *kebocoran ekonomi lokal*).
+        """)
+
+    st.info("💡 **Tips:** Bagikan halaman ini kepada pemangku kepentingan, investor, atau kelompok tani untuk memberikan pemahaman dasar sebelum melihat data analitik yang lebih rumit di halaman lain.")
 
 # --- FOOTER ---
 st.markdown("---")
