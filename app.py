@@ -208,7 +208,18 @@ elif menu == "Prediksi & Proyeksi Ekonomi":
                                       color_discrete_map={"Historis": "blue", "Prediksi ML": "orange"})
                         
                         fig2.update_traces(texttemplate='%{text:,.0f}', textposition='top left')
-                        fig2.update_
+                        fig2.update_layout(xaxis_title="Tahun", yaxis_title=target_col, template="plotly_white")
+                        st.plotly_chart(fig2, use_container_width=True)
+
+                        # MEMANGGIL FUNGSI INTERPRETASI OTOMATIS
+                        nilai_akhir_historis = df_hist_csv['Nilai'].iloc[-1]
+                        nilai_akhir_prediksi = df_pred_csv['Nilai'].iloc[-1]
+                        tahun_akhir_prediksi = df_pred_csv['Tahun'].iloc[-1]
+                        
+                        buat_interpretasi(nilai_akhir_historis, nilai_akhir_prediksi, tahun_terakhir_csv, int(tahun_akhir_prediksi), target_col, nama_model_terpilih)
+
+            except Exception as e:
+                st.error(f"Terjadi kesalahan saat memproses CSV. Detail: {e}")
     # --- HALAMAN 4: BUKU SAKU (FAQ) ---
 elif menu == "Buku Saku (FAQ)":
     st.header("📖 Buku Saku Interaktif SCH-Hub")
