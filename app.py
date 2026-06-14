@@ -64,115 +64,140 @@ elif menu == "Konsep SCH-Hub":
 # --- HALAMAN 3: PREDIKSI MASA DEPAN (MACHINE LEARNING) ---
 elif menu == "Prediksi & Proyeksi Ekonomi":
     st.header("📈 Prediksi Berbasis Machine Learning")
-    st.write("Unggah dataset historis (CSV) untuk memprediksi Populasi, Kebutuhan Lapangan Kerja, atau Nilai Komoditas di masa depan.")
+    st.write("Gunakan data historis untuk memprediksi tren produksi komoditas kelapa di masa depan menggunakan algoritma *Linear Regression*.")
 
-    # 1. UNGGAH DATASET
-    uploaded_file = st.file_uploader("Unggah File Dataset (Format .csv)", type=["csv"])
-    
-    # Memberikan contoh format dataset yang benar jika pengguna belum mengunggah
-    with st.expander("Lihat Panduan Format CSV yang Dibutuhkan"):
-        st.markdown("""
-        Pastikan file CSV Anda memiliki kolom **Tahun** sebagai acuan waktu, dan kolom metrik lainnya. Contoh:
-        | Tahun | Populasi_Sulbar | Lapangan_Kerja_Tersedia | Produksi_Kelapa_Ton |
-        |---|---|---|---|
-        | 2015 | 1300000 | 45000 | 50000 |
-        | 2016 | 1320000 | 47000 | 52000 |
-        """)
+    # Membuat dua tab: Input Manual dan Upload CSV
+    tab1, tab2 = st.tabs(["✍️ Input Manual (5 Tahun Terakhir)", "📁 Unggah File CSV"])
 
-    if uploaded_file is not None:
-        try:
-            # Membaca data
-            df = pd.read_csv(uploaded_file)
-            st.success("Dataset berhasil dimuat!")
+    # ==========================================
+    # TAB 1: INPUT MANUAL
+    # ==========================================
+    with tab1:
+        st.subheader("Input Data Tonase Produksi (2021 - 2025)")
+        st.write("Masukkan total produksi kelapa (dalam Ton) untuk 5 tahun terakhir pada kolom di bawah ini:")
+
+        # Membuat 5 kolom sejajar untuk input tahunan
+        col_thn1, col_thn2, col_thn3, col_thn4, col_thn5 = st.columns(5)
+        
+        with col_thn1:
+            ton_2021 = st.number_input("Tahun 2021", min_value=0, value=45000, step=1000)
+        with col_thn2:
+            ton_2022 = st.number_input("Tahun 2022", min_value=0, value=47000, step=1000)
+        with col_thn3:
+            ton_2023 = st.number_input("Tahun 2023", min_value=0, value=48500, step=1000)
+        with col_thn4:
+            ton_2024 = st.number_input("Tahun 2024", min_value=0, value=51000, step=1000)
+        with col_thn5:
+            ton_2025 = st.number_input("Tahun 2025", min_value=0, value=52000, step=1000)
+
+        tahun_prediksi_manual = st.slider("Prediksi Berapa Tahun ke Depan? (Manual)", min_value=1, max_value=10, value=5, key="slider_manual")
+
+        if st.button("Jalankan Prediksi AI (Data Manual)", type="primary"):
+            from sklearn.linear_model import LinearRegression
             
-            st.subheader("1. Eksplorasi & Pembersihan Data Mentah")
-            st.dataframe(df.head())
+            # Menyusun data dari input manual menjadi DataFrame
+            tahun_historis = [2021, 2022, 2023, 2024, 2025]
+            data_tonase = [ton_2021, ton_2022, ton_2023, ton_2024, ton_2025]
+            
+            df_historis = pd.DataFrame({
+                'Tahun': tahun_historis,
+                'Produksi (Ton)': data_tonase,
+                'Keterangan': 'Historis (Input Manual)'
+            })
 
-            # Pastikan ada kolom 'Tahun'
-            if 'Tahun' not in df.columns:
-                st.error("Error: Dataset harus memiliki kolom bernama 'Tahun'.")
-            else:
-                # 2. DATA CLEANING (Pembersihan Data)
-                # Mengisi nilai yang kosong (NaN) dengan nilai rata-rata (mean) dari kolom tersebut
-                df_cleaned = df.fillna(df.mean(numeric_only=True))
-                st.write("**Status Pembersihan:** Nilai kosong (NaN) telah ditangani menggunakan nilai rata-rata.")
+            # Pemodelan Regresi
+            X = df_historis[['Tahun']].values
+            y = df_historis[['Produksi (Ton)']].values
+            
+            model = LinearRegression()
+            model.fit(X, y) # Melatih model dengan 5 titik data manual
 
-                # Memilih variabel yang ingin diprediksi
-                kolom_metrik = [col for col in df_cleaned.columns if col != 'Tahun']
-                target_col = st.selectbox("Pilih Metrik yang Ingin Diprediksi (Misal: Lapangan Kerja / Produksi):", kolom_metrik)
-                
-                tahun_prediksi = st.slider("Prediksi Berapa Tahun ke Depan?", min_value=1, max_value=20, value=5)
+            # Prediksi masa depan
+            tahun_terakhir = 2025
+            X_masa_depan = np.array([[tahun_terakhir + i] for i in range(1, tahun_prediksi_manual + 1)])
+            prediksi_masa_depan = model.predict(X_masa_depan)
 
-                if st.button("Jalankan Prediksi AI"):
-                    from sklearn.linear_model import LinearRegression
-                    from sklearn.preprocessing import MinMaxScaler
+            # Menyusun DataFrame hasil prediksi
+            df_prediksi = pd.DataFrame({
+                'Tahun': X_masa_depan.flatten(),
+                'Produksi (Ton)': prediksi_masa_depan.flatten(),
+                'Keterangan': 'Prediksi ML'
+            })
+
+            df_gabungan = pd.concat([df_historis, df_prediksi])
+
+            # Visualisasi Plotly
+            st.markdown("---")
+            st.subheader("📊 Proyeksi Produksi Komoditas Kelapa")
+            fig = px.line(df_gabungan, x='Tahun', y='Produksi (Ton)', color='Keterangan', 
+                          markers=True, text='Produksi (Ton)',
+                          color_discrete_map={"Historis (Input Manual)": "#2E86C1", "Prediksi ML": "#E67E22"})
+            
+            # Merapikan tampilan teks angka pada grafik
+            fig.update_traces(texttemplate='%{text:,.0f}', textposition='top left')
+            fig.update_layout(xaxis_title="Tahun", yaxis_title="Total Tonase", template="plotly_white")
+            
+            st.plotly_chart(fig, use_container_width=True)
+
+    # ==========================================
+    # TAB 2: UNGGAH CSV (Fitur Sebelumnya)
+    # ==========================================
+    with tab2:
+        st.subheader("Unggah Dataset Kompleks")
+        uploaded_file = st.file_uploader("Unggah File Dataset (Format .csv)", type=["csv"], key="file_csv")
+        
+        if uploaded_file is not None:
+            try:
+                df = pd.read_csv(uploaded_file)
+                st.success("Dataset berhasil dimuat!")
+                st.dataframe(df.head())
+
+                if 'Tahun' not in df.columns:
+                    st.error("Error: Dataset harus memiliki kolom bernama 'Tahun'.")
+                else:
+                    df_cleaned = df.fillna(df.mean(numeric_only=True))
+                    kolom_metrik = [col for col in df_cleaned.columns if col != 'Tahun']
+                    target_col = st.selectbox("Pilih Metrik yang Ingin Diprediksi:", kolom_metrik)
                     
-                    st.markdown("---")
-                    st.subheader(f"📊 Hasil Prediksi: {target_col}")
+                    tahun_pred_csv = st.slider("Prediksi Berapa Tahun ke Depan? (CSV)", min_value=1, max_value=20, value=5, key="slider_csv")
 
-                    # 3. NORMALISASI DATA (Opsional untuk Regresi Linear sederhana, namun baik sebagai standar ML)
-                    # Kita pisahkan X (Tahun) dan y (Target)
-                    X = df_cleaned[['Tahun']].values
-                    y = df_cleaned[[target_col]].values
+                    if st.button("Jalankan Prediksi AI (Data CSV)"):
+                        from sklearn.linear_model import LinearRegression
+                        from sklearn.preprocessing import MinMaxScaler
+                        
+                        X = df_cleaned[['Tahun']].values
+                        y = df_cleaned[[target_col]].values
 
-                    scaler_X = MinMaxScaler()
-                    scaler_y = MinMaxScaler()
+                        scaler_X = MinMaxScaler()
+                        scaler_y = MinMaxScaler()
 
-                    X_scaled = scaler_X.fit_transform(X)
-                    y_scaled = scaler_y.fit_transform(y)
+                        X_scaled = scaler_X.fit_transform(X)
+                        y_scaled = scaler_y.fit_transform(y)
 
-                    # 4. PEMODELAN (Regresi Linear)
-                    model = LinearRegression()
-                    model.fit(X_scaled, y_scaled) # Melatih model dengan data historis
+                        model = LinearRegression()
+                        model.fit(X_scaled, y_scaled)
 
-                    # 5. MEMBUAT PREDIKSI KE DEPAN
-                    tahun_terakhir = int(df_cleaned['Tahun'].max())
-                    tahun_masa_depan = np.array([[tahun_terakhir + i] for i in range(1, tahun_prediksi + 1)])
-                    
-                    # Normalisasi tahun masa depan sebelum diprediksi
-                    tahun_masa_depan_scaled = scaler_X.transform(tahun_masa_depan)
-                    
-                    # Prediksi
-                    prediksi_scaled = model.predict(tahun_masa_depan_scaled)
-                    
-                    # Kembalikan nilai prediksi ke skala aslinya (Denormalisasi)
-                    prediksi_asli = scaler_y.inverse_transform(prediksi_scaled)
+                        tahun_terakhir_csv = int(df_cleaned['Tahun'].max())
+                        X_depan_csv = np.array([[tahun_terakhir_csv + i] for i in range(1, tahun_pred_csv + 1)])
+                        X_depan_scaled = scaler_X.transform(X_depan_csv)
+                        
+                        prediksi_scaled = model.predict(X_depan_scaled)
+                        prediksi_asli = scaler_y.inverse_transform(prediksi_scaled)
 
-                    # Menggabungkan data historis dan prediksi untuk visualisasi
-                    df_historis = pd.DataFrame({'Tahun': df_cleaned['Tahun'], 'Nilai': df_cleaned[target_col], 'Keterangan': 'Historis'})
-                    df_prediksi = pd.DataFrame({'Tahun': tahun_masa_depan.flatten(), 'Nilai': prediksi_asli.flatten(), 'Keterangan': 'Prediksi ML'})
-                    
-                    df_gabungan = pd.concat([df_historis, df_prediksi])
+                        df_hist_csv = pd.DataFrame({'Tahun': df_cleaned['Tahun'], 'Nilai': df_cleaned[target_col], 'Keterangan': 'Historis'})
+                        df_pred_csv = pd.DataFrame({'Tahun': X_depan_csv.flatten(), 'Nilai': prediksi_asli.flatten(), 'Keterangan': 'Prediksi ML'})
+                        
+                        df_gabung_csv = pd.concat([df_hist_csv, df_pred_csv])
 
-                    # 6. VISUALISASI HASIL PREDIKSI (PLOTLY)
-                    fig = px.line(df_gabungan, x='Tahun', y='Nilai', color='Keterangan', 
-                                  markers=True, title=f"Proyeksi {target_col} hingga Tahun {tahun_terakhir + tahun_prediksi}",
-                                  color_discrete_map={"Historis": "blue", "Prediksi ML": "orange"})
-                    
-                    fig.update_layout(xaxis_title="Tahun", yaxis_title=target_col, template="plotly_white")
-                    st.plotly_chart(fig, use_container_width=True)
+                        fig2 = px.line(df_gabung_csv, x='Tahun', y='Nilai', color='Keterangan', 
+                                      markers=True, title=f"Proyeksi {target_col}",
+                                      color_discrete_map={"Historis": "blue", "Prediksi ML": "orange"})
+                        
+                        fig2.update_layout(xaxis_title="Tahun", yaxis_title=target_col, template="plotly_white")
+                        st.plotly_chart(fig2, use_container_width=True)
 
-                    # Menampilkan tabel data prediksi
-                    st.write("### Detail Angka Prediksi")
-                    df_prediksi_tabel = df_prediksi.drop(columns=['Keterangan'])
-                    df_prediksi_tabel['Tahun'] = df_prediksi_tabel['Tahun'].astype(str) # Agar tidak pakai koma ribuan di tahun
-                    
-                    # Tampilkan metrik pertumbuhan
-                    nilai_terakhir_historis = df_historis.iloc[-1]['Nilai']
-                    nilai_akhir_prediksi = df_prediksi.iloc[-1]['Nilai']
-                    persentase_tumbuh = ((nilai_akhir_prediksi - nilai_terakhir_historis) / nilai_terakhir_historis) * 100
-
-                    col1, col2 = st.columns([1, 2])
-                    with col1:
-                        st.dataframe(df_prediksi_tabel, hide_index=True)
-                    with col2:
-                        st.metric(label=f"Proyeksi Pertumbuhan {target_col} ({tahun_terakhir} - {tahun_terakhir+tahun_prediksi})", 
-                                  value=f"{nilai_akhir_prediksi:,.0f}", 
-                                  delta=f"{persentase_tumbuh:.2f}%")
-                        st.info("💡 **Catatan Analisis:** Model Regresi Linear ini mendeteksi tren dari data historis Anda. Jika Anda ingin menguji skenario SCH-Hub (lonjakan tiba-tiba), Anda perlu menambahkan kolom variabel intervensi (dummy variable) pada dataset Anda.")
-
-        except Exception as e:
-            st.error(f"Terjadi kesalahan saat memproses data. Pastikan format CSV sesuai. Detail Error: {e}")
+            except Exception as e:
+                st.error(f"Terjadi kesalahan saat memproses CSV. Detail: {e}")
 
 # --- FOOTER ---
 st.markdown("---")
