@@ -61,43 +61,118 @@ elif menu == "Konsep SCH-Hub":
     st.write("Mengubah kelapa butiran menjadi produk bernilai tinggi:")
     st.markdown("- 🥥 **Desiccated Coconut** (Kelapa Parut Kering)\n- 🧪 **Virgin Coconut Oil (VCO)**\n- 🔥 **Activated Carbon** (Arang Aktif dari Tempurung)")
 
-# --- HALAMAN 3: PREDIKSI MASA DEPAN ---
+# --- HALAMAN 3: PREDIKSI MASA DEPAN (MACHINE LEARNING) ---
 elif menu == "Prediksi & Proyeksi Ekonomi":
-    st.header("📈 Prediksi Peningkatan Nilai Tambah (2025 - 2030)")
-    st.write("Simulasi perbandingan pertumbuhan nilai ekonomi komoditas kelapa antara skenario *Business as Usual* (dijual mentah/kopra) dengan implementasi *SCH-Hub* (hilirisasi dengan lonjakan nilai tambah hingga **1500%**).")
+    st.header("📈 Prediksi Berbasis Machine Learning")
+    st.write("Unggah dataset historis (CSV) untuk memprediksi Populasi, Kebutuhan Lapangan Kerja, atau Nilai Komoditas di masa depan.")
 
-    # Membuat Data Simulasi (Mock Data)
-    tahun = np.arange(2025, 2031)
+    # 1. UNGGAH DATASET
+    uploaded_file = st.file_uploader("Unggah File Dataset (Format .csv)", type=["csv"])
     
-    # Skenario 1: Tanpa Hilirisasi (Pertumbuhan lambat 5% per tahun)
-    nilai_awal = 100 # Indeks nilai awal (miliar Rupiah misalnya)
-    skenario_mentah = [nilai_awal * (1.05 ** i) for i in range(len(tahun))]
-    
-    # Skenario 2: Dengan SCH-Hub (Lonjakan eksponensial menuju 1500% di tahun ke-5)
-    # Mencapai ~15x lipat pada tahun 2030
-    skenario_hilirisasi = [nilai_awal * (1 + (14 * (i / 5)**1.5)) for i in range(len(tahun))]
+    # Memberikan contoh format dataset yang benar jika pengguna belum mengunggah
+    with st.expander("Lihat Panduan Format CSV yang Dibutuhkan"):
+        st.markdown("""
+        Pastikan file CSV Anda memiliki kolom **Tahun** sebagai acuan waktu, dan kolom metrik lainnya. Contoh:
+        | Tahun | Populasi_Sulbar | Lapangan_Kerja_Tersedia | Produksi_Kelapa_Ton |
+        |---|---|---|---|
+        | 2015 | 1300000 | 45000 | 50000 |
+        | 2016 | 1320000 | 47000 | 52000 |
+        """)
 
-    df_prediksi = pd.DataFrame({
-        "Tahun": tahun,
-        "Penjualan Mentah/Kopra (BAU)": skenario_mentah,
-        "Ekosistem SCH-Hub (Hilirisasi)": skenario_hilirisasi
-    })
+    if uploaded_file is not None:
+        try:
+            # Membaca data
+            df = pd.read_csv(uploaded_file)
+            st.success("Dataset berhasil dimuat!")
+            
+            st.subheader("1. Eksplorasi & Pembersihan Data Mentah")
+            st.dataframe(df.head())
 
-    # Plotly Chart
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df_prediksi["Tahun"], y=df_prediksi["Penjualan Mentah/Kopra (BAU)"],
-                             mode='lines+markers', name='Tanpa Hilirisasi (BAU)', line=dict(color='red', dash='dash')))
-    fig.add_trace(go.Scatter(x=df_prediksi["Tahun"], y=df_prediksi["Ekosistem SCH-Hub (Hilirisasi)"],
-                             mode='lines+markers', name='Dengan SCH-Hub (Hilirisasi)', line=dict(color='green', width=3)))
+            # Pastikan ada kolom 'Tahun'
+            if 'Tahun' not in df.columns:
+                st.error("Error: Dataset harus memiliki kolom bernama 'Tahun'.")
+            else:
+                # 2. DATA CLEANING (Pembersihan Data)
+                # Mengisi nilai yang kosong (NaN) dengan nilai rata-rata (mean) dari kolom tersebut
+                df_cleaned = df.fillna(df.mean(numeric_only=True))
+                st.write("**Status Pembersihan:** Nilai kosong (NaN) telah ditangani menggunakan nilai rata-rata.")
 
-    fig.update_layout(title="Proyeksi Pertumbuhan Nilai Tambah Komoditas Kelapa Sulbar",
-                      xaxis_title="Tahun",
-                      yaxis_title="Indeks Nilai Ekonomi",
-                      template="plotly_white")
-    
-    st.plotly_chart(fig, use_container_width=True)
-    
-    st.success("📝 **Kesimpulan Prediksi:** Implementasi SCH-Hub tidak hanya menekan kebocoran ekonomi lokal (*local economic leakage*), tetapi juga menggeser kurva pertumbuhan secara radikal, menciptakan resiliensi daya saing ekonomi Sulawesi Barat secara inklusif dan berkelanjutan.")
+                # Memilih variabel yang ingin diprediksi
+                kolom_metrik = [col for col in df_cleaned.columns if col != 'Tahun']
+                target_col = st.selectbox("Pilih Metrik yang Ingin Diprediksi (Misal: Lapangan Kerja / Produksi):", kolom_metrik)
+                
+                tahun_prediksi = st.slider("Prediksi Berapa Tahun ke Depan?", min_value=1, max_value=20, value=5)
+
+                if st.button("Jalankan Prediksi AI"):
+                    from sklearn.linear_model import LinearRegression
+                    from sklearn.preprocessing import MinMaxScaler
+                    
+                    st.markdown("---")
+                    st.subheader(f"📊 Hasil Prediksi: {target_col}")
+
+                    # 3. NORMALISASI DATA (Opsional untuk Regresi Linear sederhana, namun baik sebagai standar ML)
+                    # Kita pisahkan X (Tahun) dan y (Target)
+                    X = df_cleaned[['Tahun']].values
+                    y = df_cleaned[[target_col]].values
+
+                    scaler_X = MinMaxScaler()
+                    scaler_y = MinMaxScaler()
+
+                    X_scaled = scaler_X.fit_transform(X)
+                    y_scaled = scaler_y.fit_transform(y)
+
+                    # 4. PEMODELAN (Regresi Linear)
+                    model = LinearRegression()
+                    model.fit(X_scaled, y_scaled) # Melatih model dengan data historis
+
+                    # 5. MEMBUAT PREDIKSI KE DEPAN
+                    tahun_terakhir = int(df_cleaned['Tahun'].max())
+                    tahun_masa_depan = np.array([[tahun_terakhir + i] for i in range(1, tahun_prediksi + 1)])
+                    
+                    # Normalisasi tahun masa depan sebelum diprediksi
+                    tahun_masa_depan_scaled = scaler_X.transform(tahun_masa_depan)
+                    
+                    # Prediksi
+                    prediksi_scaled = model.predict(tahun_masa_depan_scaled)
+                    
+                    # Kembalikan nilai prediksi ke skala aslinya (Denormalisasi)
+                    prediksi_asli = scaler_y.inverse_transform(prediksi_scaled)
+
+                    # Menggabungkan data historis dan prediksi untuk visualisasi
+                    df_historis = pd.DataFrame({'Tahun': df_cleaned['Tahun'], 'Nilai': df_cleaned[target_col], 'Keterangan': 'Historis'})
+                    df_prediksi = pd.DataFrame({'Tahun': tahun_masa_depan.flatten(), 'Nilai': prediksi_asli.flatten(), 'Keterangan': 'Prediksi ML'})
+                    
+                    df_gabungan = pd.concat([df_historis, df_prediksi])
+
+                    # 6. VISUALISASI HASIL PREDIKSI (PLOTLY)
+                    fig = px.line(df_gabungan, x='Tahun', y='Nilai', color='Keterangan', 
+                                  markers=True, title=f"Proyeksi {target_col} hingga Tahun {tahun_terakhir + tahun_prediksi}",
+                                  color_discrete_map={"Historis": "blue", "Prediksi ML": "orange"})
+                    
+                    fig.update_layout(xaxis_title="Tahun", yaxis_title=target_col, template="plotly_white")
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    # Menampilkan tabel data prediksi
+                    st.write("### Detail Angka Prediksi")
+                    df_prediksi_tabel = df_prediksi.drop(columns=['Keterangan'])
+                    df_prediksi_tabel['Tahun'] = df_prediksi_tabel['Tahun'].astype(str) # Agar tidak pakai koma ribuan di tahun
+                    
+                    # Tampilkan metrik pertumbuhan
+                    nilai_terakhir_historis = df_historis.iloc[-1]['Nilai']
+                    nilai_akhir_prediksi = df_prediksi.iloc[-1]['Nilai']
+                    persentase_tumbuh = ((nilai_akhir_prediksi - nilai_terakhir_historis) / nilai_terakhir_historis) * 100
+
+                    col1, col2 = st.columns([1, 2])
+                    with col1:
+                        st.dataframe(df_prediksi_tabel, hide_index=True)
+                    with col2:
+                        st.metric(label=f"Proyeksi Pertumbuhan {target_col} ({tahun_terakhir} - {tahun_terakhir+tahun_prediksi})", 
+                                  value=f"{nilai_akhir_prediksi:,.0f}", 
+                                  delta=f"{persentase_tumbuh:.2f}%")
+                        st.info("💡 **Catatan Analisis:** Model Regresi Linear ini mendeteksi tren dari data historis Anda. Jika Anda ingin menguji skenario SCH-Hub (lonjakan tiba-tiba), Anda perlu menambahkan kolom variabel intervensi (dummy variable) pada dataset Anda.")
+
+        except Exception as e:
+            st.error(f"Terjadi kesalahan saat memproses data. Pastikan format CSV sesuai. Detail Error: {e}")
 
 # --- FOOTER ---
 st.markdown("---")
