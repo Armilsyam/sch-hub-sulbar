@@ -105,7 +105,20 @@ elif menu == "Konsep SCH-Hub":
 # --- HALAMAN 3: PREDIKSI MASA DEPAN (MACHINE LEARNING) ---
 elif menu == "Prediksi & Proyeksi Ekonomi":
     st.header("📈 Prediksi Berbasis Machine Learning")
-    st.write("Gunakan data historis untuk memprediksi tren produksi komoditas kelapa di masa depan menggunakan algoritma *Linear Regression*.")
+    st.write("Gunakan data historis untuk memprediksi tren produksi komoditas kelapa di masa depan.")
+
+    st.markdown("---")
+    st.subheader("⚙️ Pengaturan Model AI")
+    # Menu Dropdown untuk memilih Algoritma
+    pilihan_algoritma = st.selectbox(
+        "Pilih Algoritma Prediksi:",
+        [
+            "1. Linear Regression (Garis lurus, cocok untuk tren stabil & data terbatas)",
+            "2. Polynomial Regression (Melengkung, cocok untuk tren eksponensial/akselerasi)",
+            "3. Random Forest Regressor (Decision Tree, cocok untuk CSV dengan banyak variabel)"
+        ]
+    )
+    st.markdown("---")
 
     # Membuat dua tab: Input Manual dan Upload CSV
     tab1, tab2 = st.tabs(["✍️ Input Manual (5 Tahun Terakhir)", "📁 Unggah File CSV"])
@@ -117,7 +130,6 @@ elif menu == "Prediksi & Proyeksi Ekonomi":
         st.subheader("Input Data Tonase Produksi (2021 - 2025)")
         st.write("Masukkan total produksi kelapa (dalam Ton) untuk 5 tahun terakhir pada kolom di bawah ini:")
 
-        # Membuat 5 kolom sejajar untuk input tahunan
         col_thn1, col_thn2, col_thn3, col_thn4, col_thn5 = st.columns(5)
         
         with col_thn1:
@@ -135,56 +147,57 @@ elif menu == "Prediksi & Proyeksi Ekonomi":
 
         if st.button("Jalankan Prediksi AI (Data Manual)", type="primary"):
             from sklearn.linear_model import LinearRegression
+            from sklearn.preprocessing import PolynomialFeatures
+            from sklearn.pipeline import make_pipeline
+            from sklearn.ensemble import RandomForestRegressor
             
-            # Menyusun data dari input manual menjadi DataFrame
             tahun_historis = [2021, 2022, 2023, 2024, 2025]
             data_tonase = [ton_2021, ton_2022, ton_2023, ton_2024, ton_2025]
             
-            df_historis = pd.DataFrame({
-                'Tahun': tahun_historis,
-                'Produksi (Ton)': data_tonase,
-                'Keterangan': 'Historis (Input Manual)'
-            })
+            df_historis = pd.DataFrame({'Tahun': tahun_historis, 'Produksi (Ton)': data_tonase, 'Keterangan': 'Historis (Input Manual)'})
 
-            # Pemodelan Regresi
             X = df_historis[['Tahun']].values
-            y = df_historis[['Produksi (Ton)']].values
-            
-            model = LinearRegression()
-            model.fit(X, y) # Melatih model dengan 5 titik data manual
+            y = df_historis['Produksi (Ton)'].values # Menggunakan 1D array untuk y agar kompatibel dengan RF
 
-            # Prediksi masa depan
+            # Logika Pemilihan Model
+            if "Linear Regression" in pilihan_algoritma:
+                model = LinearRegression()
+            elif "Polynomial Regression" in pilihan_algoritma:
+                # Degree 2 membuat garis bisa melengkung 1 kali
+                model = make_pipeline(PolynomialFeatures(degree=2), LinearRegression())
+            elif "Random Forest" in pilihan_algoritma:
+                model = RandomForestRegressor(n_estimators=100, random_state=42)
+
+            model.fit(X, y)
+
             tahun_terakhir = 2025
             X_masa_depan = np.array([[tahun_terakhir + i] for i in range(1, tahun_prediksi_manual + 1)])
             prediksi_masa_depan = model.predict(X_masa_depan)
 
-            # Menyusun DataFrame hasil prediksi
-            df_prediksi = pd.DataFrame({
-                'Tahun': X_masa_depan.flatten(),
-                'Produksi (Ton)': prediksi_masa_depan.flatten(),
-                'Keterangan': 'Prediksi ML'
-            })
-
+            df_prediksi = pd.DataFrame({'Tahun': X_masa_depan.flatten(), 'Produksi (Ton)': prediksi_masa_depan.flatten(), 'Keterangan': 'Prediksi ML'})
             df_gabungan = pd.concat([df_historis, df_prediksi])
 
-            # Visualisasi Plotly
             st.markdown("---")
-            st.subheader("📊 Proyeksi Produksi Komoditas Kelapa")
+            st.subheader(f"📊 Proyeksi Produksi (Model: {pilihan_algoritma.split('(')[0]})")
+            
+            # Peringatan Edukasi jika menggunakan RF pada data sedikit
+            if "Random Forest" in pilihan_algoritma:
+                st.warning("⚠️ **Karakteristik Random Forest:** Algoritma berbasis pohon tidak bisa menebak angka lebih tinggi dari batas maksimal data latihnya. Pada data 1 Dimensi (hanya Tahun & Tonase), hasilnya akan terlihat **mendatar (flat)**. Model ini baru akan bersinar jika Anda mengunggah CSV dengan banyak variabel (Luas Lahan, Cuaca, dll).")
+
             fig = px.line(df_gabungan, x='Tahun', y='Produksi (Ton)', color='Keterangan', 
                           markers=True, text='Produksi (Ton)',
                           color_discrete_map={"Historis (Input Manual)": "#2E86C1", "Prediksi ML": "#E67E22"})
             
-            # Merapikan tampilan teks angka pada grafik
             fig.update_traces(texttemplate='%{text:,.0f}', textposition='top left')
             fig.update_layout(xaxis_title="Tahun", yaxis_title="Total Tonase", template="plotly_white")
-            
             st.plotly_chart(fig, use_container_width=True)
 
     # ==========================================
-    # TAB 2: UNGGAH CSV (Fitur Sebelumnya)
+    # TAB 2: UNGGAH CSV
     # ==========================================
     with tab2:
         st.subheader("Unggah Dataset Kompleks")
+        st.write("Unggah data dengan kolom `Tahun`, `Produksi_Ton`, `Luas_Lahan`, dll.")
         uploaded_file = st.file_uploader("Unggah File Dataset (Format .csv)", type=["csv"], key="file_csv")
         
         if uploaded_file is not None:
@@ -198,42 +211,64 @@ elif menu == "Prediksi & Proyeksi Ekonomi":
                 else:
                     df_cleaned = df.fillna(df.mean(numeric_only=True))
                     kolom_metrik = [col for col in df_cleaned.columns if col != 'Tahun']
-                    target_col = st.selectbox("Pilih Metrik yang Ingin Diprediksi:", kolom_metrik)
+                    target_col = st.selectbox("Pilih Metrik yang Ingin Diprediksi (Target / y):", kolom_metrik)
+                    
+                    # Memilih fitur pendukung (X) jika ada lebih dari 2 kolom
+                    fitur_pendukung = st.multiselect("Pilih Variabel Pendukung (Opsional, untuk Random Forest):", [c for c in kolom_metrik if c != target_col])
                     
                     tahun_pred_csv = st.slider("Prediksi Berapa Tahun ke Depan? (CSV)", min_value=1, max_value=20, value=5, key="slider_csv")
 
                     if st.button("Jalankan Prediksi AI (Data CSV)"):
                         from sklearn.linear_model import LinearRegression
-                        from sklearn.preprocessing import MinMaxScaler
+                        from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler
+                        from sklearn.pipeline import make_pipeline
+                        from sklearn.ensemble import RandomForestRegressor
                         
-                        X = df_cleaned[['Tahun']].values
-                        y = df_cleaned[[target_col]].values
+                        # Menyiapkan fitur X (Tahun + Variabel Pendukung jika ada)
+                        kolom_X = ['Tahun'] + fitur_pendukung
+                        X = df_cleaned[kolom_X].values
+                        y = df_cleaned[target_col].values
 
                         scaler_X = MinMaxScaler()
-                        scaler_y = MinMaxScaler()
-
                         X_scaled = scaler_X.fit_transform(X)
-                        y_scaled = scaler_y.fit_transform(y)
 
-                        model = LinearRegression()
-                        model.fit(X_scaled, y_scaled)
+                        if "Linear Regression" in pilihan_algoritma:
+                            model = LinearRegression()
+                        elif "Polynomial Regression" in pilihan_algoritma:
+                            model = make_pipeline(PolynomialFeatures(degree=2), LinearRegression())
+                        elif "Random Forest" in pilihan_algoritma:
+                            model = RandomForestRegressor(n_estimators=100, random_state=42)
 
+                        model.fit(X_scaled, y) # Melatih model (y tidak perlu discale agar mudah dibaca)
+
+                        # Menyiapkan X masa depan
                         tahun_terakhir_csv = int(df_cleaned['Tahun'].max())
-                        X_depan_csv = np.array([[tahun_terakhir_csv + i] for i in range(1, tahun_pred_csv + 1)])
+                        
+                        # Jika ada fitur pendukung, kita asumsikan nilainya konstan (menggunakan nilai tahun terakhir)
+                        X_depan_list = []
+                        nilai_terakhir_pendukung = df_cleaned[fitur_pendukung].iloc[-1].values if fitur_pendukung else []
+                        
+                        for i in range(1, tahun_pred_csv + 1):
+                            baris_baru = [tahun_terakhir_csv + i] + list(nilai_terakhir_pendukung)
+                            X_depan_list.append(baris_baru)
+                            
+                        X_depan_csv = np.array(X_depan_list)
                         X_depan_scaled = scaler_X.transform(X_depan_csv)
                         
-                        prediksi_scaled = model.predict(X_depan_scaled)
-                        prediksi_asli = scaler_y.inverse_transform(prediksi_scaled)
+                        prediksi_asli = model.predict(X_depan_scaled)
 
                         df_hist_csv = pd.DataFrame({'Tahun': df_cleaned['Tahun'], 'Nilai': df_cleaned[target_col], 'Keterangan': 'Historis'})
-                        df_pred_csv = pd.DataFrame({'Tahun': X_depan_csv.flatten(), 'Nilai': prediksi_asli.flatten(), 'Keterangan': 'Prediksi ML'})
+                        df_pred_csv = pd.DataFrame({'Tahun': X_depan_csv[:, 0], 'Nilai': prediksi_asli, 'Keterangan': 'Prediksi ML'})
                         
                         df_gabung_csv = pd.concat([df_hist_csv, df_pred_csv])
 
+                        st.markdown("---")
+                        st.subheader(f"📊 Proyeksi {target_col} (Model: {pilihan_algoritma.split('(')[0]})")
                         fig2 = px.line(df_gabung_csv, x='Tahun', y='Nilai', color='Keterangan', 
-                                      markers=True, title=f"Proyeksi {target_col}",
+                                      markers=True, text='Nilai',
                                       color_discrete_map={"Historis": "blue", "Prediksi ML": "orange"})
                         
+                        fig2.update_traces(texttemplate='%{text:,.0f}', textposition='top left')
                         fig2.update_layout(xaxis_title="Tahun", yaxis_title=target_col, template="plotly_white")
                         st.plotly_chart(fig2, use_container_width=True)
 
