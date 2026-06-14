@@ -33,33 +33,74 @@ if menu == "Latar Belakang & Analisis":
 
 # --- HALAMAN 2: KONSEP SCH-HUB ---
 elif menu == "Konsep SCH-Hub":
-    st.header("5 Pilar Strategic Coconut Hilirization Hub (SCH-Hub)")
-    st.write("Rekayasa ekosistem hulu-hilir secara terbuka dan komprehensif:")
-    
-    st.write("") # Memberi sedikit jarak (spacer)
-
-    # Susunan Baris 1 (2 Kolom)
-    col1, col2 = st.columns(2)
-    col1.metric("Pilar 1", "Investasi Manufaktur", "Klaster Terpadu")
-    col2.metric("Pilar 2", "Digitalisasi Rantai Pasok", "Supply Chain Terhubung")
-    
-    st.write("") # Spacer
-    
-    # Susunan Baris 2 (2 Kolom)
-    col3, col4 = st.columns(2)
-    col3.metric("Pilar 3", "Penciptaan Lapangan Kerja", "Ekonomi Sirkular")
-    col4.metric("Pilar 4", "Reformasi Kelembagaan", "Korporatisasi (BUMP)")
-
-    st.write("") # Spacer
-
-    # Susunan Baris 3 (Dibuat di tengah dengan trik rasio kolom)
-    left_spacer, center_col, right_spacer = st.columns([1, 2, 1])
-    center_col.metric("Pilar 5", "Inovasi Produksi", "Smart Farming")
+    st.header("Integrasi Digital dan Ekonomi Sirkular")
+    st.markdown("Menuju Sulawesi Barat yang Berdaya Saing Global melalui optimalisasi seluruh bagian komoditas kelapa (*Zero Waste*) dan keterhubungan digital.")
 
     st.markdown("---")
-    st.subheader("Diversifikasi Produk Hilirisasi")
-    st.write("Mengubah kelapa butiran menjadi produk bernilai tinggi:")
-    st.markdown("- 🥥 **Desiccated Coconut** (Kelapa Parut Kering)\n- 🧪 **Virgin Coconut Oil (VCO)**\n- 🔥 **Activated Carbon** (Arang Aktif dari Tempurung)")
+    
+    # BAGIAN 1: ALUR HILIRISASI (EKONOMI SIRKULAR)
+    st.subheader("🔄 Alur Hilirisasi Komoditas (Peningkatan Nilai Tambah)")
+    st.write("Mengubah kelapa butiran mentah menjadi deretan produk bernilai jual tinggi:")
+
+    # Fungsi untuk membuat baris alur agar rapi
+    def buat_alur(bahan_mentah, produk_hilir, emoji_bahan, emoji_produk):
+        col1, col2, col3 = st.columns([2, 1, 3])
+        with col1:
+            st.info(f"{emoji_bahan} **{bahan_mentah}**")
+        with col2:
+            st.markdown("<h2 style='text-align: center; margin-top: -10px;'>➔</h2>", unsafe_allow_html=True)
+        with col3:
+            st.success(f"{emoji_produk} **{produk_hilir}**")
+            
+    st.write("") # Spacer
+    buat_alur("Daging Kelapa", "Virgin Coconut Oil (VCO) & Desiccated Coconut", "🥥", "🧪")
+    buat_alur("Sabut Kelapa", "Cocofiber & Kerajinan Ekspor", "🟫", "🧶")
+    buat_alur("Tempurung", "Activated Carbon (Arang Aktif) / Briket", "🌑", "🔥")
+    buat_alur("Air Kelapa", "Nata de Coco", "💧", "🧊")
+
+    st.markdown("---")
+
+    # BAGIAN 2: 5 PILAR STRATEGIS DENGAN SCH-APP SEBAGAI PUSAT
+    st.subheader("📱 5 Pilar Strategis Berpusat pada SCH-APP")
+    st.write("Aplikasi cerdas **SCH-APP** bertindak sebagai ekosistem penghubung (*Hub*) dari hulu ke hilir.")
+
+    st.write("") # Spacer
+
+    # Membuat tata letak Hub (Kiri - Tengah - Kanan)
+    col_kiri, col_tengah, col_kanan = st.columns([1, 1.5, 1])
+
+    with col_kiri:
+        st.metric("Pilar 1", "Reformasi Kelembagaan", "Korporatisasi Petani")
+        st.write("")
+        st.write("")
+        st.metric("Pilar 2", "Rantai Pasok Terhubung", "Memotong Perantara")
+
+    with col_tengah:
+        # Membuat kotak visual untuk SCH-APP di tengah
+        st.markdown("""
+        <div style="background-color: #f0f2f6; padding: 40px 20px; border-radius: 20px; text-align: center; border: 3px solid #2E86C1; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+            <h1 style="color: #2E86C1; margin-bottom: 0;">📱 SCH-APP</h1>
+            <h4 style="margin-top: 5px;">Digital Hub</h4>
+            <hr style="margin: 10px 0;">
+            <p style="font-size: 14px; color: #555;">Pusat kendali yang mengintegrasikan Data Petani, Proses Produksi, dan Permintaan Pasar secara <i>Real-Time</i>.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_kanan:
+        st.metric("Pilar 3", "Lapangan Kerja Baru", "Sektor Sirkular")
+        st.write("")
+        st.write("")
+        st.metric("Pilar 4", "Stimulus Investasi", "Fasilitas Manufaktur")
+
+    st.write("") # Spacer
+
+    # Pilar 5 diletakkan di tengah bawah untuk keseimbangan visual
+    _, col_bawah_tengah, _ = st.columns([1, 1.5, 1])
+    with col_bawah_tengah:
+        st.metric("Pilar 5", "Inovasi Produksi", "Smart Farming Terapan")
+
+    st.markdown("---")
+    st.caption("Pondasi Ekonomi Sulbar (2025): Sektor Pertanian & Perkebunan mendominasi 47,71%. Target: Mendorong Sektor Industri Pengolahan melalui komoditas unggulan non-sawit.")
 
 # --- HALAMAN 3: PREDIKSI MASA DEPAN (MACHINE LEARNING) ---
 elif menu == "Prediksi & Proyeksi Ekonomi":
