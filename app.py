@@ -36,15 +36,25 @@ elif menu == "Konsep SCH-Hub":
     st.header("5 Pilar Strategic Coconut Hilirization Hub (SCH-Hub)")
     st.write("Rekayasa ekosistem hulu-hilir secara terbuka dan komprehensif:")
     
-    # Membuat visualisasi pilar menggunakan card/container
-    col1, col2, col3 = st.columns(3)
+    st.write("") # Memberi sedikit jarak (spacer)
+
+    # Susunan Baris 1 (2 Kolom)
+    col1, col2 = st.columns(2)
     col1.metric("Pilar 1", "Investasi Manufaktur", "Klaster Terpadu")
     col2.metric("Pilar 2", "Digitalisasi Rantai Pasok", "Supply Chain Terhubung")
-    col3.metric("Pilar 3", "Penciptaan Lapangan Kerja", "Ekonomi Sirkular")
     
-    col4, col5 = st.columns(2)
+    st.write("") # Spacer
+    
+    # Susunan Baris 2 (2 Kolom)
+    col3, col4 = st.columns(2)
+    col3.metric("Pilar 3", "Penciptaan Lapangan Kerja", "Ekonomi Sirkular")
     col4.metric("Pilar 4", "Reformasi Kelembagaan", "Korporatisasi (BUMP)")
-    col5.metric("Pilar 5", "Inovasi Produksi", "Smart Farming")
+
+    st.write("") # Spacer
+
+    # Susunan Baris 3 (Dibuat di tengah dengan trik rasio kolom)
+    left_spacer, center_col, right_spacer = st.columns([1, 2, 1])
+    center_col.metric("Pilar 5", "Inovasi Produksi", "Smart Farming")
 
     st.markdown("---")
     st.subheader("Diversifikasi Produk Hilirisasi")
