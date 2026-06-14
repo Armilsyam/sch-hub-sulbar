@@ -1,0 +1,5 @@
+sch-hub-sulbar/
+│
+├── app.py                 # File utama aplikasi Streamlit
+├── requirements.txt       # Daftar library Python yang dibutuhkan
+└── README.md              # Penjelasan proyek untuk GitHub
