@@ -13,8 +13,10 @@ st.subheader("Hilirisasi Komoditas Kelapa Melalui Model *Strategic Coconut Hilir
 st.markdown("---")
 
 # --- SIDEBAR UNTUK NAVIGASI ---
-st.sidebar.title("Navigasi")
-menu = st.sidebar.radio("Pilih Halaman:", ["Latar Belakang & Analisis", "Konsep SCH-Hub", "Prediksi & Proyeksi Ekonomi", "Buku Saku (FAQ)"])
+menu = st.sidebar.radio(
+    "Pilih Halaman:", 
+    ["Latar Belakang & Analisis", "Konsep SCH-Hub", "Prediksi & Proyeksi Ekonomi", "Buku Saku (FAQ)", "🤝 Hub Pasar & Kemitraan"]
+)
 
 # --- HALAMAN 1: LATAR BELAKANG ---
 if menu == "Latar Belakang & Analisis":
@@ -378,6 +380,105 @@ elif menu == "Buku Saku (FAQ)":
 
     st.info("💡 **Tips:** Bagikan halaman ini kepada pemangku kepentingan, investor, atau kelompok tani untuk memberikan pemahaman dasar sebelum melihat data analitik yang lebih rumit di halaman lain.")
 
+    # ==========================================
+# HALAMAN 5: HUB PASAR & KEMITRAAN (NEW)
+# ==========================================
+elif menu == "🤝 Hub Pasar & Kemitraan":
+    st.header("🤝 Hub Pasar & Kemitraan Digital (SCH-Marketplace)")
+    st.write("Platform integrasi B2B yang menghubungkan Korporatisasi Petani (BUMP) di Sulawesi Barat langsung dengan Industri Manufaktur, Pembeli Domestik, dan Korporasi Eksportir Global.")
+    st.markdown("---")
+
+    # Membuat metrik ringkasan pasar di bagian atas
+    col_stat1, col_stat2, col_stat3 = st.columns(3)
+    col_stat1.metric("Total BUMP Terdaftar", "14 Kelompok", "Polman, Majene, Mamuju")
+    col_stat2.metric("Volume Perdagangan Bulan Ini", "42.5 Ton", "+12.4%")
+    col_stat3.metric("Kontrak B2B Aktif", "8 Mitra Industri", "Lokal & Ekspor")
+
+    st.write("") # Spacer
+
+    # Membuat dua tab: Etalase Produk Olahan dan Portal Kontrak Kerja Sama
+    tab_pasar1, tab_pasar2 = st.tabs(["🛒 Etalase Produk Olahan BUMP", "📜 Kontrak & Kemitraan Industri (B2B)"])
+
+    # --- TAB 1: ETALASE PRODUK OLAHAN ---
+    with tab_pasar1:
+        st.subheader("Produk Hasil Olahan Kelapa Nilai Tinggi Siap Ambil")
+        st.write("Daftar komoditas olahan kelapa dalam yang diproduksi secara higienis oleh Badan Usaha Milik Petani (BUMP) Sulbar:")
+
+        # Filter produk interaktif
+        kategori_pilih = st.selectbox("Filter Berdasarkan Komoditas:", ["Semua Produk", "Daging Kelapa (VCO/Desiccated)", "Tempurung (Arang/Briket)", "Air Kelapa (Nata de Coco)"])
+
+        # Data Mock Produk
+        data_produk = [
+            {"nama": "🧪 Virgin Coconut Oil (VCO) Premium", "bump": "BUMP Campalagian Mandiri (Polman)", "stok": "4,500 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)"},
+            {"nama": "🌑 Activated Carbon (Arang Aktif) Mesh 4x8", "bump": "BUMP Majene Sejahtera", "stok": "15 Ton", "harga": "Rp 12,500 / Kg", "kategori": "Tempurung (Arang/Briket)"},
+            {"nama": "🥥 Desiccated Coconut (Kelapa Parut Kering) High Fat", "bump": "BUMP Sendana Baru (Majene)", "stok": "8 Ton", "harga": "Rp 22,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)"},
+            {"nama": "🧊 Nata de Coco Sheet (Bahan Baku Pangan)", "bump": "BUMP Mamuju Bangkit", "stok": "12 Ton", "harga": "Rp 6,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)"}
+        ]
+
+        # Tampilkan produk berdasarkan filter
+        for produk in data_produk:
+            if kategori_pilih == "Semua Produk" or produk["kategori"] == kategori_pilih:
+                with st.container():
+                    st.markdown(f"""
+                    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; border-left: 5px solid #2E86C1; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #2E86C1;">{produk['nama']}</h4>
+                        <p style="margin: 5px 0; font-size: 14px; color: #555;"><b>Produsen:</b> {produk['bump']}</p>
+                        <div style="display: flex; gap: 30px; margin-top: 10px;">
+                            <span style="background-color: #e8f4fd; padding: 3px 10px; border-radius: 5px; font-size: 13px;">📦 <b>Stok Tersedia:</b> {produk['stok']}</span>
+                            <span style="background-color: #eafaf1; padding: 3px 10px; border-radius: 5px; font-size: 13px; color: #27ae60;">💰 <b>Harga Pengajuan BUMP:</b> {produk['harga']}</span>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Tombol interaksi order
+                    col_btn1, col_btn2, _ = st.columns([1, 1, 3])
+                    with col_btn1:
+                        st.button("Ajukan Penawaran Harga", key=f"tawar_{produk['nama']}")
+                    with col_btn2:
+                        st.button("Minta Sampel Produk", key=f"sampel_{produk['nama']}")
+                    st.write("")
+
+    # --- TAB 2: PORTAL KONTRAK B2B ---
+    with tab_pasar2:
+        st.subheader("Manajemen Kontrak Jangka Panjang (Forward Contract)")
+        st.write("Fitur proteksi stabilitas harga untuk menjauhkan petani dari risiko volatilitas harga global melalui komitmen pasokan tetap dengan perusahaan penyerap (*Offtaker*).")
+
+        st.markdown("#### 📑 Permintaan Kontrak Aktif dari Korporasi")
+        
+        col_k1, col_k2 = st.columns(2)
+        with col_k1:
+            with st.expander("🏢 PT Industri Kosmetik Nusantara (Jakarta)"):
+                st.write("""
+                - **Kebutuhan Komoditas:** Virgin Coconut Oil (VCO)
+                - **Volume Kontrak Tahunan:** 50,000 Liter / Tahun
+                - **Standar Kualitas:** Kadar air < 0.1%, Bebas Asam Lemak Bebas tinggi.
+                - **Status Negosiasi:** ⏳ Menunggu Verifikasi Volume Pasokan dari BUMP Polman.
+                """)
+                st.button("Tanggapi Kontrak Hub", key="btn_k1", type="primary")
+                
+        with col_k2:
+            with st.expander("🌍 Tokyo Carbon Purification Ltd (Jepang)"):
+                st.write("""
+                - **Kebutuhan Komoditas:** Activated Carbon (Arang Aktif Batok Kelapa)
+                - **Volume Kontrak Tahunan:** 120 Ton / Tahun (Ekspor)
+                - **Standar Kualitas:** Nilai iodium > 1000 mg/g.
+                - **Status Negosiasi:** ✅ Kontrak Ditandatangani via SCH-APP (Fase Logistik).
+                """)
+                st.button("Lihat Jadwal Pengapalan", key="btn_k2")
+
+        st.markdown("---")
+        st.markdown("#### ✍️ Ajukan Kemitraan Baru (Untuk Calon Buyer/Investor)")
+        
+        # Form Interaktif untuk simulasi juri
+        with st.form("form_kemitraan"):
+            nama_perusahaan = st.text_input("Nama Perusahaan / Industri:")
+            jenis_olahan = st.selectbox("Komoditas Kelapa Olahan yang Dibutuhkan:", ["Virgin Coconut Oil (VCO)", "Activated Carbon", "Desiccated Coconut", "Nata de Coco Bulk"])
+            volume_butuh = st.number_input("Estimasi Kebutuhan (Ton atau Liter per Bulan):", min_value=1, value=5)
+            catatan_spek = st.text_area("Spesifikasi Teknis atau Kriteria Khusus Produk:")
+            
+            submit_kontrak = st.form_submit_button("Kirim Formulir Penjajakan Kerja Sama")
+            if submit_kontrak:
+                st.success(f" Terima kasih {nama_perusahaan}. Formulir Anda untuk komoditas {jenis_olahan} telah diteruskan ke sistem kelembagaan BUMP Sulawesi Barat melalui SCH-Hub pusat data. Perwakilan kelompok tani akan menghubungi Anda dalam waktu maksimal 2x24 jam.")
 # --- FOOTER ---
 st.markdown("---")
 st.caption("Dikembangkan berdasarkan Opini Ilmiah: Hilirisasi Kelapa; SCH-Hub; Rantai Pasok Terintegrasi; Sulawesi Barat.")
