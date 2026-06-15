@@ -7,35 +7,64 @@ import plotly.graph_objects as go
 # --- KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="SCH-Hub Sulbar", page_icon="🥥", layout="wide")
 
-# --- HEADER (STICKY / MELAYANG SEMPURNA) ---
+# --- HEADER (STICKY & RESPONSIVE UNTUK PC DAN ANDROID) ---
 st.markdown("""
     <style>
-        /* Trik CSS menargetkan kontainer asli Streamlit agar sticky berfungsi */
-        div[data-testid="stVerticalBlock"] > div:has(.sticky-header-container) {
-            position: sticky;
-            top: 2.875rem; /* Berada tepat di bawah garis atas Streamlit */
-            z-index: 9999; /* Memaksa elemen selalu berada di lapisan paling depan */
-            background-color: #ffffff; /* Background terang */
-            padding-top: 10px;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #e0e4e9;
+        /* 1. Menghapus ruang kosong berlebih di bagian atas aplikasi */
+        .block-container {
+            padding-top: 1.5rem !important;
         }
-        
-        /* Penyesuaian otomatis jika pengguna memakai Dark Mode */
+
+        /* 2. Mengatur ukuran teks untuk Layar Lebar (PC / Laptop) */
+        .judul-utama {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            padding-bottom: 5px;
+            color: var(--text-color);
+        }
+        .subjudul-utama {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #7f8c8d;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* 3. PENGATURAN KHUSUS LAYAR KECIL (HP Android / iOS) */
+        @media screen and (max-width: 768px) {
+            .judul-utama {
+                font-size: 1.25rem !important; /* Mengecilkan judul agar tidak penuh di HP */
+            }
+            .subjudul-utama {
+                font-size: 0.85rem !important; /* Mengecilkan subjudul di HP */
+            }
+        }
+
+        /* 4. Membuat elemen terkunci di atas (Sticky) dengan kompatibilitas tinggi */
+        /* Menggunakan 'first-child' memastikan ini bekerja di semua browser HP */
+        [data-testid="stMain"] [data-testid="stVerticalBlock"] > div:first-child {
+            position: -webkit-sticky; /* Dukungan untuk browser Safari/Apple */
+            position: sticky;
+            top: 2.875rem; /* Posisi di bawah garis atas Streamlit */
+            z-index: 9999;
+            background-color: white; /* Latar belakang padat agar tidak tembus pandang */
+            padding: 5px 0px 15px 0px;
+            border-bottom: 2px solid #f0f2f6;
+        }
+
+        /* 5. Dukungan Otomatis jika pengguna HP memakai Dark Mode (Mode Gelap) */
         @media (prefers-color-scheme: dark) {
-            div[data-testid="stVerticalBlock"] > div:has(.sticky-header-container) {
-                background-color: #0e1117; /* Background gelap bawaan Streamlit */
+            [data-testid="stMain"] [data-testid="stVerticalBlock"] > div:first-child {
+                background-color: #0e1117; /* Latar belakang gelap Streamlit */
                 border-bottom: 2px solid #262730;
             }
         }
     </style>
     
-    <div class="sticky-header-container">
-        <h1 style="margin: 0; padding-bottom: 5px;">🥥 Transformasi Ekonomi Sulawesi Barat</h1>
-        <h4 style="margin: 0; font-weight: 400; color: #7f8c8d;">
-            Hilirisasi Komoditas Kelapa Melalui Model <i>Strategic Coconut Hilirization Hub</i> (SCH-Hub)
-        </h4>
+    <div>
+        <div class="judul-utama">🥥 Transformasi Ekonomi Sulawesi Barat</div>
+        <div class="subjudul-utama">Hilirisasi Komoditas Kelapa Melalui Model <i>Strategic Coconut Hilirization Hub</i> (SCH-Hub)</div>
     </div>
 """, unsafe_allow_html=True)
 # --- SIDEBAR UNTUK NAVIGASI ---
