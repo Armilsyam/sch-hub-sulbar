@@ -402,41 +402,97 @@ elif menu == "🤝 Hub Pasar & Kemitraan":
     # --- TAB 1: ETALASE PRODUK OLAHAN ---
     with tab_pasar1:
         st.subheader("Produk Hasil Olahan Kelapa Nilai Tinggi Siap Ambil")
-        st.write("Daftar komoditas olahan kelapa dalam yang diproduksi secara higienis oleh Badan Usaha Milik Petani (BUMP) Sulbar:")
+        st.write("Daftar komoditas olahan kelapa dari 6 Kabupaten di Sulawesi Barat. Setiap daerah memiliki spesialisasi komoditas prioritas (⭐) untuk optimalisasi rantai pasok.")
 
-        # Filter produk interaktif
-        kategori_pilih = st.selectbox("Filter Berdasarkan Komoditas:", ["Semua Produk", "Daging Kelapa (VCO/Desiccated)", "Tempurung (Arang/Briket)", "Air Kelapa (Nata de Coco)"])
+        # Filter produk interaktif (Ditambah Filter Kabupaten)
+        col_filter1, col_filter2 = st.columns(2)
+        with col_filter1:
+            kategori_pilih = st.selectbox("Filter Kategori Produk:", ["Semua Produk", "Daging Kelapa (VCO/Desiccated)", "Tempurung (Arang/Briket)", "Air Kelapa (Nata de Coco)"])
+        with col_filter2:
+            kabupaten_pilih = st.selectbox("Filter Wilayah Kabupaten:", ["Semua Kabupaten", "Polewali Mandar", "Majene", "Mamuju", "Mamuju Tengah", "Pasangkayu", "Mamasa"])
 
-        # Data Mock Produk
+        # Data Master Komoditas (6 Kabupaten x 4 Produk = 24 Data)
         data_produk = [
-            {"nama": "🧪 Virgin Coconut Oil (VCO) Premium", "bump": "BUMP Campalagian Mandiri (Polman)", "stok": "4,500 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)"},
-            {"nama": "🌑 Activated Carbon (Arang Aktif) Mesh 4x8", "bump": "BUMP Majene Sejahtera", "stok": "15 Ton", "harga": "Rp 12,500 / Kg", "kategori": "Tempurung (Arang/Briket)"},
-            {"nama": "🥥 Desiccated Coconut (Kelapa Parut Kering) High Fat", "bump": "BUMP Sendana Baru (Majene)", "stok": "8 Ton", "harga": "Rp 22,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)"},
-            {"nama": "🧊 Nata de Coco Sheet (Bahan Baku Pangan)", "bump": "BUMP Mamuju Bangkit", "stok": "12 Ton", "harga": "Rp 6,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)"}
+            # 1. POLEWALI MANDAR (Polman) - Prioritas: VCO (Populasi padat, produksi kelapa tertinggi)
+            {"nama": "🧪 Virgin Coconut Oil (VCO) Premium", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "5,000 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
+            {"nama": "🥥 Desiccated Coconut (High Fat)", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "10 Ton", "harga": "Rp 21,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🌑 Activated Carbon (Arang Aktif)", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "8 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
+            {"nama": "🧊 Nata de Coco Sheet", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "15 Ton", "harga": "Rp 6,000 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
+
+            # 2. MAJENE - Prioritas: Activated Carbon (Karakteristik batok kelapa pesisir yang keras, bagus untuk arang ekspor)
+            {"nama": "🌑 Activated Carbon Mesh 4x8 (Export Quality)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "20 Ton", "harga": "Rp 13,500 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": True},
+            {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "2,000 Liter", "harga": "Rp 44,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🥥 Desiccated Coconut (Medium Fat)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "5 Ton", "harga": "Rp 20,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🧊 Nata de Coco Bulk", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "10 Ton", "harga": "Rp 5,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
+
+            # 3. MAMUJU - Prioritas: Nata de Coco (Pusat ibukota, dekat dengan industri makanan/minuman)
+            {"nama": "🧊 Nata de Coco Dadu (Food Grade)", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "25 Ton", "harga": "Rp 7,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": True},
+            {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "3,000 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🥥 Desiccated Coconut", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "6 Ton", "harga": "Rp 21,500 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🌑 Briket Arang Tempurung", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "12 Ton", "harga": "Rp 11,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
+
+            # 4. MAMUJU TENGAH (Mateng) - Prioritas: Desiccated Coconut (Potensi lahan ekspansi untuk industri skala besar)
+            {"nama": "🥥 Desiccated Coconut (Fine Grade Ekspor)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "30 Ton", "harga": "Rp 23,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
+            {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "1,500 Liter", "harga": "Rp 43,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🌑 Activated Carbon (Arang Aktif)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "10 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
+            {"nama": "🧊 Nata de Coco Sheet", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "8 Ton", "harga": "Rp 6,000 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
+
+            # 5. PASANGKAYU - Prioritas: Briket Arang (Integrasi dengan industri perkebunan sawit setempat)
+            {"nama": "🌑 Briket Arang Shisha Premium", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "18 Ton", "harga": "Rp 14,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": True},
+            {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "1,000 Liter", "harga": "Rp 44,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🥥 Desiccated Coconut", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "5 Ton", "harga": "Rp 21,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🧊 Nata de Coco Bulk", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "5 Ton", "harga": "Rp 5,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
+
+            # 6. MAMASA - Prioritas: VCO Organik (Kawasan pegunungan, fokus pada produk organik bernilai super tinggi)
+            {"nama": "🧪 Organic Virgin Coconut Oil (Cold Pressed)", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "800 Liter", "harga": "Rp 65,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
+            {"nama": "🥥 Desiccated Coconut Organik", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "2 Ton", "harga": "Rp 28,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
+            {"nama": "🌑 Briket Arang Tempurung", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "3 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
+            {"nama": "🧊 Nata de Coco Sheet", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "2 Ton", "harga": "Rp 6,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
         ]
 
-        # Tampilkan produk berdasarkan filter
+        st.write("") # Spacer
+
+        # Logika menampikan produk berdasarkan filter
+        produk_ditemukan = 0
         for produk in data_produk:
-            if kategori_pilih == "Semua Produk" or produk["kategori"] == kategori_pilih:
+            cek_kategori = (kategori_pilih == "Semua Produk") or (produk["kategori"] == kategori_pilih)
+            cek_kabupaten = (kabupaten_pilih == "Semua Kabupaten") or (produk["kabupaten"] == kabupaten_pilih)
+            
+            if cek_kategori and cek_kabupaten:
+                produk_ditemukan += 1
+                
+                # Desain Badge (Label) Prioritas
+                badge_prioritas = ""
+                border_style = "border-left: 5px solid #bdc3c7;" # Warna abu-abu untuk non-prioritas
+                bg_style = "#ffffff"
+                
+                if produk["prioritas"]:
+                    badge_prioritas = "<span style='background-color: #f39c12; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;'>⭐ KOMODITAS PRIORITAS DAERAH</span>"
+                    border_style = "border-left: 5px solid #f39c12;" # Warna emas/oranye untuk prioritas
+                    bg_style = "#fffcf5" # Background agak kekuningan
+                
                 with st.container():
                     st.markdown(f"""
-                    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; border-left: 5px solid #2E86C1; margin-bottom: 15px;">
-                        <h4 style="margin: 0; color: #2E86C1;">{produk['nama']}</h4>
-                        <p style="margin: 5px 0; font-size: 14px; color: #555;"><b>Produsen:</b> {produk['bump']}</p>
+                    <div style="background-color: {bg_style}; padding: 15px 20px; border-radius: 10px; {border_style} margin-bottom: 15px; box-shadow: 1px 1px 5px rgba(0,0,0,0.05);">
+                        <h4 style="margin: 0; color: #333;">{produk['nama']} {badge_prioritas}</h4>
+                        <p style="margin: 4px 0; font-size: 14px; color: #555;"><b>📍 Wilayah:</b> {produk['kabupaten']} | <b>🏢 Produsen:</b> {produk['bump']}</p>
                         <div style="display: flex; gap: 30px; margin-top: 10px;">
-                            <span style="background-color: #e8f4fd; padding: 3px 10px; border-radius: 5px; font-size: 13px;">📦 <b>Stok Tersedia:</b> {produk['stok']}</span>
-                            <span style="background-color: #eafaf1; padding: 3px 10px; border-radius: 5px; font-size: 13px; color: #27ae60;">💰 <b>Harga Pengajuan BUMP:</b> {produk['harga']}</span>
+                            <span style="background-color: #e8f4fd; padding: 4px 10px; border-radius: 5px; font-size: 13px; color: #2980b9;">📦 <b>Stok:</b> {produk['stok']}</span>
+                            <span style="background-color: #eafaf1; padding: 4px 10px; border-radius: 5px; font-size: 13px; color: #27ae60;">💰 <b>Harga B2B:</b> {produk['harga']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Tombol interaksi order
-                    col_btn1, col_btn2, _ = st.columns([1, 1, 3])
+                    # Tombol aksi
+                    col_btn1, col_btn2, _ = st.columns([1.5, 1.5, 3])
                     with col_btn1:
-                        st.button("Ajukan Penawaran Harga", key=f"tawar_{produk['nama']}")
+                        st.button("Ajukan Penawaran Harga", key=f"tawar_{produk['kabupaten']}_{produk['nama']}")
                     with col_btn2:
-                        st.button("Minta Sampel Produk", key=f"sampel_{produk['nama']}")
+                        st.button("Minta Sampel Produk", key=f"sampel_{produk['kabupaten']}_{produk['nama']}")
                     st.write("")
+        
+        if produk_ditemukan == 0:
+            st.warning("Produk dengan filter tersebut tidak ditemukan.")
 
     # --- TAB 2: PORTAL KONTRAK B2B ---
     with tab_pasar2:
