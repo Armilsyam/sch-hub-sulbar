@@ -414,36 +414,42 @@ elif menu == "🤝 Hub Pasar & Kemitraan":
         # Data Master Komoditas (6 Kabupaten x 4 Produk = 24 Data)
         data_produk = [
             # 1. POLEWALI MANDAR (Polman) - Prioritas: VCO (Populasi padat, produksi kelapa tertinggi)
+        st.subheader("WILAYAH POLEWALI MANDAR")
             {"nama": "🧪 Virgin Coconut Oil (VCO) Premium", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "5,000 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
             {"nama": "🥥 Desiccated Coconut (High Fat)", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "10 Ton", "harga": "Rp 21,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🌑 Activated Carbon (Arang Aktif)", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "8 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
             {"nama": "🧊 Nata de Coco Sheet", "kabupaten": "Polewali Mandar", "bump": "BUMP Campalagian Mandiri", "stok": "15 Ton", "harga": "Rp 6,000 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
 
             # 2. MAJENE - Prioritas: Activated Carbon (Karakteristik batok kelapa pesisir yang keras, bagus untuk arang ekspor)
+        st.subheader("WILAYAH MAJENE")
             {"nama": "🌑 Activated Carbon Mesh 4x8 (Export Quality)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "20 Ton", "harga": "Rp 13,500 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": True},
             {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "2,000 Liter", "harga": "Rp 44,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🥥 Desiccated Coconut (Medium Fat)", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "5 Ton", "harga": "Rp 20,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🧊 Nata de Coco Bulk", "kabupaten": "Majene", "bump": "BUMP Pesisir Majene Sejahtera", "stok": "10 Ton", "harga": "Rp 5,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
 
             # 3. MAMUJU - Prioritas: Nata de Coco (Pusat ibukota, dekat dengan industri makanan/minuman)
+        st.subheader("WILAYAH MAMUJU")
             {"nama": "🧊 Nata de Coco Dadu (Food Grade)", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "25 Ton", "harga": "Rp 7,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": True},
             {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "3,000 Liter", "harga": "Rp 45,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🥥 Desiccated Coconut", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "6 Ton", "harga": "Rp 21,500 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🌑 Briket Arang Tempurung", "kabupaten": "Mamuju", "bump": "BUMP Mamuju Agro Utama", "stok": "12 Ton", "harga": "Rp 11,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
 
             # 4. MAMUJU TENGAH (Mateng) - Prioritas: Desiccated Coconut (Potensi lahan ekspansi untuk industri skala besar)
+        st.subheader("WILAYAH MAMUJU TENGAH")
             {"nama": "🥥 Desiccated Coconut (Fine Grade Ekspor)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "30 Ton", "harga": "Rp 23,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
             {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "1,500 Liter", "harga": "Rp 43,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🌑 Activated Carbon (Arang Aktif)", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "10 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
             {"nama": "🧊 Nata de Coco Sheet", "kabupaten": "Mamuju Tengah", "bump": "BUMP Mateng Agro Lestari", "stok": "8 Ton", "harga": "Rp 6,000 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
 
             # 5. PASANGKAYU - Prioritas: Briket Arang (Integrasi dengan industri perkebunan sawit setempat)
+        st.subheader("WILAYAH PASANGKAYU")
             {"nama": "🌑 Briket Arang Shisha Premium", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "18 Ton", "harga": "Rp 14,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": True},
             {"nama": "🧪 Virgin Coconut Oil (VCO)", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "1,000 Liter", "harga": "Rp 44,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🥥 Desiccated Coconut", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "5 Ton", "harga": "Rp 21,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🧊 Nata de Coco Bulk", "kabupaten": "Pasangkayu", "bump": "BUMP Pasangkayu Energi", "stok": "5 Ton", "harga": "Rp 5,500 / Kg", "kategori": "Air Kelapa (Nata de Coco)", "prioritas": False},
 
             # 6. MAMASA - Prioritas: VCO Organik (Kawasan pegunungan, fokus pada produk organik bernilai super tinggi)
+        st.subheader("WILAYAH MAMASA")
             {"nama": "🧪 Organic Virgin Coconut Oil (Cold Pressed)", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "800 Liter", "harga": "Rp 65,000 / Liter", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": True},
             {"nama": "🥥 Desiccated Coconut Organik", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "2 Ton", "harga": "Rp 28,000 / Kg", "kategori": "Daging Kelapa (VCO/Desiccated)", "prioritas": False},
             {"nama": "🌑 Briket Arang Tempurung", "kabupaten": "Mamasa", "bump": "BUMP Pegunungan Mamasa Organik", "stok": "3 Ton", "harga": "Rp 12,000 / Kg", "kategori": "Tempurung (Arang/Briket)", "prioritas": False},
