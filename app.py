@@ -67,12 +67,17 @@ st.markdown("""
         <div class="subjudul-utama">Hilirisasi Komoditas Kelapa Melalui Model <i>Strategic Coconut Hilirization Hub</i> (SCH-Hub)</div>
     </div>
 """, unsafe_allow_html=True)
-# --- SIDEBAR UNTUK NAVIGASI ---
 menu = st.sidebar.radio(
     "Pilih Halaman:", 
-    ["Latar Belakang & Analisis", "Konsep SCH-Hub", "Prediksi & Proyeksi Ekonomi", "Buku Saku (FAQ)", "🤝 Hub Pasar & Kemitraan"]
+    [
+        "Latar Belakang & Analisis", 
+        "Konsep SCH-Hub", 
+        "Prediksi & Proyeksi Ekonomi", 
+        "Buku Saku (FAQ)", 
+        "🤝 Hub Pasar & Kemitraan",
+        "📊 Matriks Nilai Tambah"
+    ]
 )
-
 # --- HALAMAN 1: LATAR BELAKANG ---
 if menu == "Latar Belakang & Analisis":
     st.header("Anomali dan Kerentanan Struktural Ekonomi")
