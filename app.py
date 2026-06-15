@@ -771,6 +771,53 @@ elif menu == "📊 Matriks Nilai Tambah":
         st.pyplot(fig2)
         
         st.caption("Catatan: Angka di atas adalah proyeksi kasar dalam Miliar Rupiah berdasarkan volume produksi rata-rata per kabupaten dikalikan lonjakan nilai tambah maksimum hilirisasi.")    
+        # =========================================================
+        # BAGIAN 3: PEMETAAN SPASIAL (GEOSPASIAL SULAWESI BARAT)
+        # =========================================================
+        st.markdown("---")
+        st.subheader("3. Peta Spasial Ekosistem SCH-Hub Sulawesi Barat")
+        st.write("Pemetaan titik koordinat klaster industri dan komoditas prioritas di 6 Kabupaten untuk optimalisasi rute logistik rantai pasok hilirisasi.")
+
+        import folium
+        from streamlit_folium import st_folium
+
+        # Titik Koordinat (Latitude, Longitude) 6 Kabupaten di Sulawesi Barat
+        lokasi_sulbar = [
+            {"kab": "Polewali Mandar", "lat": -3.4167, "lon": 119.3333, "prioritas": "VCO Premium", "warna": "blue", "icon": "tint"},
+            {"kab": "Majene", "lat": -3.5401, "lon": 118.9707, "prioritas": "Arang Aktif Ekspor", "warna": "gray", "icon": "fire"},
+            {"kab": "Mamuju", "lat": -2.6785, "lon": 118.8888, "prioritas": "Nata de Coco", "warna": "green", "icon": "leaf"},
+            {"kab": "Mamuju Tengah", "lat": -2.0620, "lon": 119.2842, "prioritas": "Desiccated Coconut", "warna": "orange", "icon": "star"},
+            {"kab": "Pasangkayu", "lat": -1.1736, "lon": 119.3789, "prioritas": "Briket Arang", "warna": "red", "icon": "fire"},
+            {"kab": "Mamasa", "lat": -2.9360, "lon": 119.3218, "prioritas": "VCO Organik", "warna": "purple", "icon": "leaf"}
+        ]
+
+        # Membuat Peta Dasar (Base Map) berpusat di koordinat Sulawesi Barat
+        # Menggunakan 'CartoDB positron' agar peta terlihat terang, bersih, dan profesional
+        peta_sulbar = folium.Map(location=[-2.5, 119.0], zoom_start=7, tiles="CartoDB positron")
+
+        # Menambahkan Pin/Marker interaktif ke dalam peta
+        for loc in lokasi_sulbar:
+            # Desain pop-up HTML saat pin diklik
+            popup_html = f"""
+            <div style='width: 150px;'>
+                <b style='color: #2E86C1; font-size: 14px;'>{loc['kab']}</b><br>
+                <hr style='margin: 5px 0;'>
+                <b>Komoditas:</b><br>{loc['prioritas']}<br>
+                <i style='font-size: 10px; color: gray;'>Titik SCH-Hub</i>
+            </div>
+            """
+            
+            folium.Marker(
+                location=[loc["lat"], loc["lon"]],
+                popup=folium.Popup(popup_html, max_width=200),
+                tooltip=f"Klik untuk melihat detail {loc['kab']}",
+                icon=folium.Icon(color=loc["warna"], icon=loc["icon"], prefix='glyphicon')
+            ).add_to(peta_sulbar)
+
+        # Menampilkan Peta Interaktif di dalam Streamlit
+        st_folium(peta_sulbar, width=800, height=450)
+        
+        st.info("🗺️ **Insight Logistik:** Peta di atas menunjukkan bagaimana komoditas berat (seperti Briket dan Arang Aktif) difokuskan di wilayah pesisir (Majene & Pasangkayu) untuk memangkas biaya transportasi logistik menuju pelabuhan ekspor.")
 # --- FOOTER ---
 st.markdown("---")
 st.caption("Dikembangkan berdasarkan Opini Ilmiah: Hilirisasi Kelapa; SCH-Hub; Rantai Pasok Terintegrasi; Sulawesi Barat.")
