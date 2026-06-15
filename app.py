@@ -7,29 +7,37 @@ import plotly.graph_objects as go
 # --- KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="SCH-Hub Sulbar", page_icon="🥥", layout="wide")
 
-# --- HEADER (STICKY / MELAYANG) ---
+# --- HEADER (STICKY / MELAYANG SEMPURNA) ---
 st.markdown("""
     <style>
-        /* Mengunci posisi kontainer judul di bagian atas */
-        .sticky-header {
+        /* Trik CSS menargetkan kontainer asli Streamlit agar sticky berfungsi */
+        div[data-testid="stVerticalBlock"] > div:has(.sticky-header-container) {
             position: sticky;
-            top: 2.875rem; /* Posisi tepat di bawah navbar bawaan Streamlit */
-            background-color: var(--background-color); /* Otomatis ikut Light/Dark mode */
-            z-index: 999; /* Memastikan judul selalu berada di lapisan paling depan */
-            padding: 10px 0 15px 0;
-            border-bottom: 2px solid rgba(128, 128, 128, 0.2); /* Garis pemisah tipis */
-            margin-bottom: 20px;
+            top: 2.875rem; /* Berada tepat di bawah garis atas Streamlit */
+            z-index: 9999; /* Memaksa elemen selalu berada di lapisan paling depan */
+            background-color: #ffffff; /* Background terang */
+            padding-top: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0e4e9;
+        }
+        
+        /* Penyesuaian otomatis jika pengguna memakai Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            div[data-testid="stVerticalBlock"] > div:has(.sticky-header-container) {
+                background-color: #0e1117; /* Background gelap bawaan Streamlit */
+                border-bottom: 2px solid #262730;
+            }
         }
     </style>
     
-    <div class="sticky-header">
+    <div class="sticky-header-container">
         <h1 style="margin: 0; padding-bottom: 5px;">🥥 Transformasi Ekonomi Sulawesi Barat</h1>
-        <h4 style="margin: 0; font-weight: 400; color: var(--text-color);">
+        <h4 style="margin: 0; font-weight: 400; color: #7f8c8d;">
             Hilirisasi Komoditas Kelapa Melalui Model <i>Strategic Coconut Hilirization Hub</i> (SCH-Hub)
         </h4>
     </div>
 """, unsafe_allow_html=True)
-
 # --- SIDEBAR UNTUK NAVIGASI ---
 menu = st.sidebar.radio(
     "Pilih Halaman:", 
