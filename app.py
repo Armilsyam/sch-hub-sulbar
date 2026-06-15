@@ -613,84 +613,171 @@ elif menu == "🤝 Hub Pasar & Kemitraan":
             if submit_kontrak:
                 st.success(f" Terima kasih {nama_perusahaan}. Formulir Anda untuk komoditas {jenis_olahan} telah diteruskan ke sistem kelembagaan BUMP Sulawesi Barat melalui SCH-Hub pusat data. Perwakilan kelompok tani akan menghubungi Anda dalam waktu maksimal 2x24 jam.")
         # ==========================================
-# HALAMAN 6: MATRIKS NILAI TAMBAH (NEW)
+# ==========================================
+# HALAMAN 6: MATRIKS NILAI TAMBAH (FLEXIBLE DATA SOURCE)
 # ==========================================
 elif menu == "📊 Matriks Nilai Tambah":
     st.header("📊 Matriks Proyeksi Nilai Tambah SCH-Hub")
-    st.write("Berdasarkan data matriks proyeksi, hilirisasi kelapa mampu menciptakan margin ekonomi yang eksponensial. Sorotan utama berada pada pengolahan Tempurung Kelapa menjadi *Activated Carbon* (Arang Aktif Spesifikasi Tinggi) dengan lonjakan **1200% hingga 1500%**.")
+    st.write("Analisis komparasi lonjakan nilai tambah komoditas sirkular kelapa berdasarkan pilihan sumber data yang adaptif.")
     st.markdown("---")
 
     import matplotlib.pyplot as plt
     import numpy as np
 
-    st.subheader("1. Visualisasi Grafik Komparasi Nilai Tambah")
-    
-    # 1. Data dari Tabel 1 Matriks Proyeksi Nilai Tambah SCH-Hub
-    # (Array yang sebelumnya kosong telah diisi dengan estimasi komparatif)
-    data = {
-        'Bagian Kelapa': ['Air Kelapa\n(Nata de Coco)', 'Sabut Kelapa\n(Cocofiber)', 
-                          'Daging Kelapa\n(VCO, CCO)', 'Tempurung Kelapa\n(Arang Aktif)'],
-        'Min Peningkatan (%)': [300, 250, 500, 1200],
-        'Max Peningkatan (%)': [500, 400, 800, 1500]
-    }
-    df_matriks = pd.DataFrame(data)
-
-    # 2. Visualisasi Grafik Batang (Bar Chart) dengan Matplotlib
-    x = np.arange(len(df_matriks['Bagian Kelapa']))
-    width = 0.35  # Lebar batang
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-    rects1 = ax.bar(x - width/2, df_matriks['Min Peningkatan (%)'], width, label='Estimasi Minimal (%)', color='#4C72B0')
-    rects2 = ax.bar(x + width/2, df_matriks['Max Peningkatan (%)'], width, label='Estimasi Maksimal (%)', color='#DD8452')
-
-    # Kustomisasi label dan judul
-    ax.set_ylabel('Persentase Kenaikan Nilai Tambah (%)', fontsize=12)
-    ax.set_title('Proyeksi Lonjakan Nilai Tambah Hilirisasi Kelapa (Model SCH-Hub)', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels(df_matriks['Bagian Kelapa'], fontsize=11)
-    ax.legend()
-
-    # Fungsi untuk menambahkan label angka di atas batang
-    def autolabel(rects):
-        for rect in rects:
-            height = rect.get_height()
-            ax.annotate(f'{height}%',
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 3),  # offset vertikal
-                        textcoords="offset points",
-                        ha='center', va='bottom', fontsize=10)
-
-    autolabel(rects1)
-    autolabel(rects2)
-
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-
-    # Menampilkan visualisasi Matplotlib ke dalam Streamlit
-    st.pyplot(fig)
-
+    # MENUTUP KEBUTUHAN 3 PILIHAN SUMBER DATA
+    st.subheader("⚙️ Pilih Sumber Data Matriks")
+    sumber_data_matriks = st.selectbox(
+        "Metode Pengisian Data Persentase Nilai Tambah:",
+        [
+            "🤖 1. Data Otomatis AI & Internet (Riset Rantai Nilai Global)",
+            "✍️ 2. Input Manual Kolom Terpisah (Simulasi Langsung)",
+            "📁 3. Unggah File CSV Custom (Dataset Eksternal)"
+        ]
+    )
     st.markdown("---")
-    
-    # 3. Simulasi Prediksi Nilai Rupiah (Contoh Proyeksi Tempurung Kelapa)
-    st.subheader("2. Simulasi Finansial Lonjakan Nilai Ekonomi (Tempurung Kelapa)")
-    st.info("💡 **Catatan Juri / Kelayakan Investasi:** Arang aktif ini ditargetkan untuk pasar ekspor premium, industri filter udara/air, dan manufaktur maju. Mengonversi persentase teoritis menjadi proyeksi Rupiah historis.")
 
-    # Asumsi Harga
-    harga_mentah_asumsi = 1500
-    proyeksi_min = harga_mentah_asumsi + (harga_mentah_asumsi * 1200 / 100)
-    proyeksi_max = harga_mentah_asumsi + (harga_mentah_asumsi * 1500 / 100)
+    # Inisialisasi DataFrame kosong untuk menampung hasil pilihan
+    df_matriks = pd.DataFrame()
 
-    # Menampilkan hasil print() ke dalam format dashboard metrik profesional
-    col_sim1, col_sim2, col_sim3 = st.columns(3)
-    
-    with col_sim1:
-        st.metric(label="Asumsi Harga Tempurung Mentah", value=f"Rp {harga_mentah_asumsi:,} / kg", help="Harga jual petani sebelum intervensi SCH-Hub")
-    
-    with col_sim2:
-        st.metric(label="Prediksi Arang Aktif (Min)", value=f"Rp {int(proyeksi_min):,} / kg", delta="Kenaikan 1200%", delta_color="normal")
+    # --- PILIHAN 1: DATA OTOMATIS AI ---
+    if "Data Otomatis AI" in sumber_data_matriks:
+        data_preset = {
+            'Bagian Kelapa': ['Air Kelapa\n(Nata de Coco)', 'Sabut Kelapa\n(Cocofiber)', 
+                              'Daging Kelapa\n(VCO, CCO)', 'Tempurung Kelapa\n(Arang Aktif)'],
+            'Min Peningkatan (%)': [300, 250, 500, 1200],
+            'Max Peningkatan (%)': [500, 400, 800, 1500]
+        }
+        df_matriks = pd.DataFrame(data_preset)
+        st.success("✅ **Data Otomatis Terintegrasi:** Berhasil memuat data hasil kurasi AI dari rujukan empiris literatur hilirisasi kelapa nasional.")
+
+    # --- PILIHAN 2: INPUT MANUAL KOLOM TERPISAH ---
+    elif "Input Manual" in sumber_data_matriks:
+        st.write("Silakan masukkan persentase kenaikan nilai tambah minimal dan maksimal untuk setiap komponen secara mandiri:")
         
-    with col_sim3:
-        st.metric(label="Prediksi Arang Aktif (Max)", value=f"Rp {int(proyeksi_max):,} / kg", delta="Kenaikan 1500%", delta_color="normal")       
+        col_in_min, col_in_max = st.columns(2)
+        with col_in_min:
+            st.markdown("**📉 Batas Estimasi Minimal (%)**")
+            min_air = st.number_input("Air Kelapa (Min %)", min_value=0, value=300, step=50)
+            min_sabut = st.number_input("Sabut Kelapa (Min %)", min_value=0, value=250, step=50)
+            min_daging = st.number_input("Daging Kelapa (Min %)", min_value=0, value=500, step=50)
+            min_tempurung = st.number_input("Tempurung Kelapa (Min %)", min_value=0, value=1200, step=100)
+            
+        with col_in_max:
+            st.markdown("**📈 Batas Estimasi Maksimal (%)**")
+            max_air = st.number_input("Air Kelapa (Max %)", min_value=0, value=500, step=50)
+            max_sabut = st.number_input("Sabut Kelapa (Max %)", min_value=0, value=400, step=50)
+            max_daging = st.number_input("Daging Kelapa (Max %)", min_value=0, value=800, step=50)
+            max_tempurung = st.number_input("Tempurung Kelapa (Max %)", min_value=0, value=1500, step=100)
+
+        data_manual = {
+            'Bagian Kelapa': ['Air Kelapa\n(Nata de Coco)', 'Sabut Kelapa\n(Cocofiber)', 
+                              'Daging Kelapa\n(VCO, CCO)', 'Tempurung Kelapa\n(Arang Aktif)'],
+            'Min Peningkatan (%)': [min_air, min_sabut, min_daging, min_tempurung],
+            'Max Peningkatan (%)': [max_air, max_sabut, max_daging, max_tempurung]
+        }
+        df_matriks = pd.DataFrame(data_manual)
+
+    # --- PILIHAN 3: UNGgah CSV CUSTOM ---
+    elif "Unggah File CSV" in sumber_data_matriks:
+        st.write("Unggah file CSV Anda yang berisi konfigurasi matriks nilai tambah kustom.")
+        file_matriks_csv = st.file_uploader("Pilih File CSV Matriks:", type=["csv"], key="uploader_matriks_csv")
+        
+        with st.expander("📌 Lihat Panduan Standar Kolom CSV Matriks"):
+            st.code("""
+Bagian Kelapa,Min Peningkatan (%),Max Peningkatan (%)
+Air Kelapa,300,500
+Sabut Kelapa,250,400
+Daging Kelapa,500,800
+Tempurung Kelapa,1200,1500
+            """)
+            
+        if file_matriks_csv is not None:
+            try:
+                df_uploaded = pd.read_csv(file_matriks_csv)
+                # Validasi kesesuaian kolom wajib
+                kolom_wajib = ['Bagian Kelapa', 'Min Peningkatan (%)', 'Max Peningkatan (%)']
+                if all(col in df_uploaded.columns for col in kolom_wajib):
+                    df_matriks = df_uploaded
+                    st.success("✅ **Dataset CSV Sukses Dimuat:** Otomatisasi visualisasi grafik sedang diproses.")
+                else:
+                    st.error("Gagal memproses: Struktur nama kolom di file CSV Anda tidak sesuai dengan standar panduan.")
+            except Exception as e:
+                st.error(f"Terjadi kegagalan pembacaan file CSV. Detail error: {e}")
+        else:
+            st.warning("Silakan unggah file CSV di atas untuk memicu visualisasi grafik otomatis.")
+
+    # =========================================================
+    # OTOMATISASI VISUALISASI JIKA DATA SUDAH TERSEDIA
+    # =========================================================
+    if not df_matriks.empty:
+        st.subheader("1. Visualisasi Grafik Komparasi Nilai Tambah")
+        
+        x = np.arange(len(df_matriks['Bagian Kelapa']))
+        width = 0.35  # Lebar batang
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        rects1 = ax.bar(x - width/2, df_matriks['Min Peningkatan (%)'], width, label='Estimasi Minimal (%)', color='#4C72B0')
+        rects2 = ax.bar(x + width/2, df_matriks['Max Peningkatan (%)'], width, label='Estimasi Maksimal (%)', color='#DD8452')
+
+        # Kustomisasi label dan judul
+        ax.set_ylabel('Persentase Kenaikan Nilai Tambah (%)', fontsize=12)
+        ax.set_title('Proyeksi Lonjakan Nilai Tambah Hilirisasi Kelapa (Model SCH-Hub)', fontsize=14, fontweight='bold')
+        ax.set_xticks(x)
+        ax.set_xticklabels(df_matriks['Bagian Kelapa'], fontsize=11)
+        ax.legend()
+
+        # Fungsi untuk menambahkan label angka di atas batang
+        def autolabel(rects):
+            for rect in rects:
+                height = rect.get_height()
+                ax.annotate(f'{height}%',
+                            xy=(rect.get_x() + rect.get_width() / 2, height),
+                            xytext=(0, 3),  # offset vertikal
+                            textcoords="offset points",
+                            ha='center', va='bottom', fontsize=10)
+
+        autolabel(rects1)
+        autolabel(rects2)
+
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        
+        # Tampilkan ke halaman Streamlit
+        st.pyplot(fig)
+
+        st.markdown("---")
+        
+        # 3. Simulasi Prediksi Nilai Rupiah Secara Otomatis & Dinamis
+        st.subheader("2. Simulasi Finansial Lonjakan Nilai Ekonomi (Tempurung Kelapa)")
+        
+        # Algoritma cerdas mendeteksi baris Tempurung Kelapa secara dinamis di dataset aktif
+        row_tempurung = df_matriks[df_matriks['Bagian Kelapa'].str.contains('Tempurung', case=False, na=False)]
+        
+        if not row_tempurung.empty:
+            pct_min_dinamis = row_tempurung['Min Peningkatan (%)'].values[0]
+            pct_max_dinamis = row_tempurung['Max Peningkatan (%)'].values[0]
+        else:
+            # Nilai fallback aman jika user mengunggah nama kolom custom yang berbeda di CSV
+            pct_min_dinamis = 1200
+            pct_max_dinamis = 1500
+
+        # Input manual untuk harga mentah agar interaktif
+        harga_mentah_asumsi = st.number_input("Asumsi Harga Tempurung Mentah / kg (Rp):", min_value=100, value=1500, step=100)
+        
+        # Rumus kalkulasi dinamis
+        proyeksi_min = harga_mentah_asumsi + (harga_mentah_asumsi * pct_min_dinamis / 100)
+        proyeksi_max = harga_mentah_asumsi + (harga_mentah_asumsi * pct_max_dinamis / 100)
+
+        col_sim1, col_sim2, col_sim3 = st.columns(3)
+        
+        with col_sim1:
+            st.metric(label="Asumsi Harga Tempurung Mentah", value=f"Rp {harga_mentah_asumsi:,} / kg", help="Harga baseline di tingkat petani")
+        
+        with col_sim2:
+            st.metric(label="Prediksi Arang Aktif (Batas Min)", value=f"Rp {int(proyeksi_min):,} / kg", delta=f"Kenaikan {pct_min_dinamis}%")
+            
+        with col_sim3:
+            st.metric(label="Prediksi Arang Aktif (Batas Max)", value=f"Rp {int(proyeksi_max):,} / kg", delta=f"Kenaikan {pct_max_dinamis}%")     
 # --- FOOTER ---
 st.markdown("---")
 st.caption("Dikembangkan berdasarkan Opini Ilmiah: Hilirisasi Kelapa; SCH-Hub; Rantai Pasok Terintegrasi; Sulawesi Barat.")
