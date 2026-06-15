@@ -390,7 +390,7 @@ elif menu == "🤝 Hub Pasar & Kemitraan":
 
     # Membuat metrik ringkasan pasar di bagian atas
     col_stat1, col_stat2, col_stat3 = st.columns(3)
-    col_stat1.metric("Total BUMP Terdaftar", "14 Kelompok", "Polman, Majene, Mamuju")
+    col_stat1.metric("Total BUMP Terdaftar", "20 Kelompok", "Polman, Majene, Mamuju, Pasangkayu, Mamuju Tengah, Mamasa")
     col_stat2.metric("Volume Perdagangan Bulan Ini", "42.5 Ton", "+12.4%")
     col_stat3.metric("Kontrak B2B Aktif", "8 Mitra Industri", "Lokal & Ekspor")
 
