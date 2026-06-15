@@ -7,10 +7,28 @@ import plotly.graph_objects as go
 # --- KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="SCH-Hub Sulbar", page_icon="🥥", layout="wide")
 
-# --- HEADER ---
-st.title("🥥 Transformasi Ekonomi Sulawesi Barat")
-st.subheader("Hilirisasi Komoditas Kelapa Melalui Model *Strategic Coconut Hilirization Hub* (SCH-Hub)")
-st.markdown("---")
+# --- HEADER (STICKY / MELAYANG) ---
+st.markdown("""
+    <style>
+        /* Mengunci posisi kontainer judul di bagian atas */
+        .sticky-header {
+            position: sticky;
+            top: 2.875rem; /* Posisi tepat di bawah navbar bawaan Streamlit */
+            background-color: var(--background-color); /* Otomatis ikut Light/Dark mode */
+            z-index: 999; /* Memastikan judul selalu berada di lapisan paling depan */
+            padding: 10px 0 15px 0;
+            border-bottom: 2px solid rgba(128, 128, 128, 0.2); /* Garis pemisah tipis */
+            margin-bottom: 20px;
+        }
+    </style>
+    
+    <div class="sticky-header">
+        <h1 style="margin: 0; padding-bottom: 5px;">🥥 Transformasi Ekonomi Sulawesi Barat</h1>
+        <h4 style="margin: 0; font-weight: 400; color: var(--text-color);">
+            Hilirisasi Komoditas Kelapa Melalui Model <i>Strategic Coconut Hilirization Hub</i> (SCH-Hub)
+        </h4>
+    </div>
+""", unsafe_allow_html=True)
 
 # --- SIDEBAR UNTUK NAVIGASI ---
 menu = st.sidebar.radio(
