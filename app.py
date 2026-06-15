@@ -513,12 +513,25 @@ elif menu == "🤝 Hub Pasar & Kemitraan":
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Tombol aksi
+                        import urllib.parse # Library bawaan Python untuk format teks ke link
+
+                        # Setup Nomor WhatsApp (Ubah angka 0 di depan menjadi 62)
+                        nomor_wa = "6282191843162" 
+                        
+                        # Membuat pesan otomatis yang dinamis (menyebutkan nama produk & BUMP)
+                        pesan_tawar = f"Halo {produk['bump']}, saya melihat produk *{produk['nama']}* di aplikasi SCH-Hub Sulbar. Saya mewakili perusahaan/pembeli dan tertarik untuk mengajukan penawaran harga B2B komoditas ini. Mohon info lebih lanjut."
+                        pesan_sampel = f"Halo {produk['bump']}, saya melihat produk *{produk['nama']}* di aplikasi SCH-Hub Sulbar. Kami berminat dan ingin meminta sampel produk untuk pengecekan kualitas standar pabrik. Bagaimana prosedurnya?"
+                        
+                        # Mengubah teks pesan menjadi format link internet (URL Encoded)
+                        link_wa_tawar = f"https://wa.me/{nomor_wa}?text={urllib.parse.quote(pesan_tawar)}"
+                        link_wa_sampel = f"https://wa.me/{nomor_wa}?text={urllib.parse.quote(pesan_sampel)}"
+
+                        # Menggunakan st.link_button agar langsung membuka Tab baru ke WhatsApp
                         col_btn1, col_btn2, _ = st.columns([1.5, 1.5, 3])
                         with col_btn1:
-                            st.button("Ajukan Penawaran Harga", key=f"tawar_{produk['kabupaten']}_{produk['nama']}")
+                            st.link_button("💬 Ajukan Penawaran (WA)", url=link_wa_tawar, type="primary")
                         with col_btn2:
-                            st.button("Minta Sampel Produk", key=f"sampel_{produk['kabupaten']}_{produk['nama']}")
+                            st.link_button("📦 Minta Sampel (WA)", url=link_wa_sampel)
                         st.write("")
         
         if produk_ditemukan == 0:
